@@ -27,6 +27,7 @@ echo "pretrained_path: $pretrained_path"
     --wandb \
     --save_checkpoint \
     --auto_resume \
+    --pl_lambda 0.001 \
     --mean 0.5071 0.4867 0.4408 \
     --std 0.2675 0.2565 0.2761
 

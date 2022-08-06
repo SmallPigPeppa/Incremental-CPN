@@ -223,29 +223,6 @@ class LinearModel(pl.LightningModule):
             assert new_task >= self._current_task_idx
         self._current_task_idx = new_task
 
-    @property
-    def learnable_params(self) -> List[Dict[str, Any]]:
-        """Defines learnable parameters for the base class.
-
-        Returns:
-            List[Dict[str, Any]]:
-                list of dicts containing learnable parameters and possible settings.
-        """
-
-        return [
-            {
-                "name": "encoder",
-                "params": self.encoder.parameters(),
-                "lr": 0,
-                "weight_decay": 0,
-            },
-            {
-                "name": "classifier",
-                "params": self.classifier.parameters(),
-                "lr": self.lr,
-                "weight_decay": 0,
-            },
-        ]
 
     def configure_optimizers(self) -> Tuple[List, List]:
         """Collects learnable parameters and configures the optimizer and learning rate scheduler.
