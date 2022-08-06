@@ -189,9 +189,6 @@ class LinearModel(pl.LightningModule):
             "val_acc5": acc_metrics["acc5"],
         }
 
-        if self.split_strategy == "domain" and len(batch) == 3:
-            metrics["domains"] = batch[0]
-
         return {**metrics}
 
     def validation_epoch_end(self, outs: List[Dict[str, Any]]):
