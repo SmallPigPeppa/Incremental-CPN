@@ -80,7 +80,8 @@ def main():
     if args.method == 'linear':
         model = LinearModel(encoder, tasks=tasks, **args.__dict__)
     elif args.method == 'cpn':
-        model = CPNModule(encoder, tasks=tasks, pl_lamda=args.pl_lambda, **args.__dict__)
+        current_tasks=list(range(100))
+        model = CPNModule(encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda, **args.__dict__)
 
     make_contiguous(model)
 
