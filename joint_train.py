@@ -22,6 +22,7 @@ from models.linear import LinearModel
 from utils.misc import make_contiguous
 from utils.classification_dataloader import prepare_data
 from utils.checkpointer import Checkpointer
+
 try:
     from utils.dali_dataloader import ClassificationDALIDataModule
 except ImportError:
@@ -29,6 +30,7 @@ except ImportError:
 else:
     _dali_avaliable = True
 from args.setup import parse_args_linear
+
 
 def main():
     seed_everything(5)
@@ -53,9 +55,9 @@ def main():
 
     encoder.fc = nn.Identity()
     assert (
-        args.pretrained_feature_extractor.endswith(".ckpt")
-        or args.pretrained_feature_extractor.endswith(".pth")
-        or args.pretrained_feature_extractor.endswith(".pt")
+            args.pretrained_feature_extractor.endswith(".ckpt")
+            or args.pretrained_feature_extractor.endswith(".pth")
+            or args.pretrained_feature_extractor.endswith(".pt")
     )
     ckpt_path = args.pretrained_feature_extractor
 
@@ -73,9 +75,8 @@ def main():
 
     print(f"Loaded {ckpt_path}")
 
-
     del args.encoder
-    model = LinearModel(encoder, **args.__dict__)
+    model = LinearModel(encoder, tasks=tasks, **args.__dict__)
     make_contiguous(model)
 
     if args.data_format == "dali":
