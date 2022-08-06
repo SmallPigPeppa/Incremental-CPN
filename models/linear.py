@@ -18,8 +18,9 @@ from functools import partial
 from utils.misc import compute_dataset_size
 from argparse import ArgumentParser
 
+
 def static_lr(
-    get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]
+        get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]
 ):
     lrs = get_lr()
     for idx, lr in zip(param_group_indexes, lrs_to_replace):
@@ -41,6 +42,7 @@ class LinearModel(pl.LightningModule):
         "exponential",
         "none",
     ]
+
     def __init__(self,
                  encoder: nn.Module,
                  num_classes: int,
@@ -62,7 +64,7 @@ class LinearModel(pl.LightningModule):
                  **kwargs, ):
         super(LinearModel, self).__init__()
         self.encoder = encoder
-        self.num_classes=num_classes
+        self.num_classes = num_classes
         if hasattr(self.encoder, "inplanes"):
             self.features_dim = self.encoder.inplanes
         else:
@@ -137,7 +139,7 @@ class LinearModel(pl.LightningModule):
             num_devices = self.trainer.num_devices
             num_nodes = self.trainer.num_nodes
             effective_batch_size = (
-                self.batch_size * self.trainer.accumulate_grad_batches * num_devices * num_nodes
+                    self.batch_size * self.trainer.accumulate_grad_batches * num_devices * num_nodes
             )
             self._num_training_steps = dataset_size // effective_batch_size
 
@@ -173,7 +175,7 @@ class LinearModel(pl.LightningModule):
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
-        return {"loss": loss,"logits":logits,"targets":targets}
+        return {"loss": loss, "logits": logits, "targets": targets}
 
     def validation_step(self, batch: List[torch.Tensor], batch_idx: int) -> Dict[str, Any]:
         x, targets = batch
@@ -318,6 +320,7 @@ class LinearModel(pl.LightningModule):
 
         # backbone args
         parser.add_argument("--encoder", choices=["resnet18", "resnet50"], type=str)
+        parser.add_argument("--method", type=str, default='linear')
         # general train
         parser.add_argument("--batch_size", type=int, default=128)
         parser.add_argument("--lr", type=float, default=0.3)

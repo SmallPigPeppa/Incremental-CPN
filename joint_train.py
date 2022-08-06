@@ -19,6 +19,7 @@ except ImportError:
 else:
     _dali_avaliable = True
 from models.linear import LinearModel
+from models.cpn import CPNModule
 from utils.misc import make_contiguous
 from utils.classification_dataloader import prepare_data
 from utils.checkpointer import Checkpointer
@@ -76,7 +77,11 @@ def main():
     print(f"Loaded {ckpt_path}")
 
     del args.encoder
-    model = LinearModel(encoder, tasks=tasks, **args.__dict__)
+    if args.method=='linear':
+        model = LinearModel(encoder, tasks=tasks, **args.__dict__)
+    elif args.method=='cpn':
+        model = CPNModule(encoder, tasks=tasks, **args.__dict__)
+
     make_contiguous(model)
 
     if args.data_format == "dali":
