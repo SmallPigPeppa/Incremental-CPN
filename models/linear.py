@@ -147,7 +147,7 @@ class LinearModel(pl.LightningModule):
             x = x.to(memory_format=torch.channels_last)
         with torch.no_grad():
             feats = self.encoder(x)
-        logits = self.fc(feats)
+        logits = self.classifier(feats)
         # return {"logits": logits, "feats": feats}
         return logits
 
