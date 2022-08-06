@@ -16,7 +16,7 @@ echo "pretrained_path: $pretrained_path"
     --lr 0.5 \
     --lr_decay_steps 60 80 \
     --weight_decay 0 \
-    --batch_size 1024 \
+    --batch_size 256 \
     --num_workers 10 \
     --crop_size 32 \
     --name joint-train-cifar \
