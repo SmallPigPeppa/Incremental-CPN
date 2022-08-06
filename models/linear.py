@@ -13,9 +13,10 @@ import warnings
 import numpy as np
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
-from utils.lars import LARSWrapper
+from utils.lars import LARS
 from functools import partial
 from utils.misc import compute_dataset_size
+from argparse import ArgumentParser
 
 def static_lr(
     get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]
@@ -27,8 +28,21 @@ def static_lr(
 
 
 class LinearModel(pl.LightningModule):
+    _OPTIMIZERS = {
+        "sgd": torch.optim.SGD,
+        "lars": LARS,
+        "adam": torch.optim.Adam,
+        "adamw": torch.optim.AdamW,
+    }
+    _SCHEDULERS = [
+        "reduce",
+        "warmup_cosine",
+        "step",
+        "exponential",
+        "none",
+    ]
     def __init__(self,
-                 encoder: str,
+                 encoder: nn.Module,
                  num_classes: int,
                  max_epochs: int,
                  batch_size: int,
@@ -76,7 +90,7 @@ class LinearModel(pl.LightningModule):
         # all the other parameters
         self.extra_args = kwargs
 
-        for param in self.backbone.parameters():
+        for param in self.encoder.parameters():
             param.requires_grad = False
 
         if scheduler_interval == "step":
@@ -298,3 +312,52 @@ class LinearModel(pl.LightningModule):
 
             return [optimizer], [scheduler]
 
+    @staticmethod
+    def add_model_specific_args(parent_parser: ArgumentParser) -> ArgumentParser:
+        """Adds basic linear arguments.
+
+        Args:
+            parent_parser (ArgumentParser): argument parser that is used to create a
+                argument group.
+
+        Returns:
+            ArgumentParser: same as the argument, used to avoid errors.
+        """
+
+        parser = parent_parser.add_argument_group("linear")
+
+        # backbone args
+        parser.add_argument("--encoder", choices=["resnet18", "resnet50"], type=str)
+        # general train
+        parser.add_argument("--batch_size", type=int, default=128)
+        parser.add_argument("--lr", type=float, default=0.3)
+        parser.add_argument("--weight_decay", type=float, default=0.0001)
+        parser.add_argument("--num_workers", type=int, default=4)
+
+        # wandb
+        parser.add_argument("--name")
+        parser.add_argument("--project")
+        parser.add_argument("--entity", default=None, type=str)
+        parser.add_argument("--wandb", action="store_true")
+        parser.add_argument("--offline", action="store_true")
+
+        parser.add_argument(
+            "--optimizer", choices=LinearModel._OPTIMIZERS.keys(), type=str, required=True
+        )
+        parser.add_argument("--exclude_bias_n_norm", action="store_true")
+
+        parser.add_argument(
+            "--scheduler", choices=LinearModel._SCHEDULERS, type=str, default="reduce"
+        )
+        parser.add_argument("--lr_decay_steps", default=None, type=int, nargs="+")
+        parser.add_argument("--min_lr", default=0.0, type=float)
+        parser.add_argument("--warmup_start_lr", default=0.003, type=float)
+        parser.add_argument("--warmup_epochs", default=10, type=int)
+        parser.add_argument(
+            "--scheduler_interval", choices=["step", "epoch"], default="step", type=str
+        )
+
+        # disables channel last optimization
+        parser.add_argument("--no_channel_last", action="store_true")
+
+        return parent_parser

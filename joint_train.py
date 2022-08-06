@@ -8,8 +8,9 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.plugins import DDPPlugin
 from torchvision.models import resnet18, resnet50
-
-from cassle.args.setup import parse_args_linear
+from pytorch_lightning.strategies.ddp import DDPStrategy
+from args.setup import parse_args_linear
+from utils.auto_resumer import AutoResumer
 
 try:
     from cassle.methods.dali import ClassificationABC
@@ -21,7 +22,13 @@ from models.linear import LinearModel
 from utils.misc import make_contiguous
 from utils.classification_dataloader import prepare_data
 from utils.checkpointer import Checkpointer
-
+try:
+    from utils.dali_dataloader import ClassificationDALIDataModule
+except ImportError:
+    _dali_avaliable = False
+else:
+    _dali_avaliable = True
+from args.setup import parse_args_linear
 
 def main():
     seed_everything(5)
@@ -65,8 +72,8 @@ def main():
 
     print(f"Loaded {ckpt_path}")
 
-    model = LinearModel(encoder, **args.__dict__)
-    del args.backbone
+
+    del args.encoder
     model = LinearModel(encoder, **args.__dict__)
     make_contiguous(model)
 
@@ -180,3 +187,6 @@ def main():
     else:
         trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
 
+
+if __name__ == "__main__":
+    main()
