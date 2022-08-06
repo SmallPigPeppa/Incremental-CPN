@@ -74,7 +74,8 @@ def parse_args_linear() -> argparse.Namespace:
 
     # linear model
     from models.linear import LinearModel
-    parser =LinearModel.add_model_specific_args(parser)
+    from models.cpn import CPNModule
+    parser =CPNModule.add_model_specific_args(parser)
 
     # THIS LINE IS KEY TO PULL WANDB AND SAVE_CHECKPOINT
     parser.add_argument("--save_checkpoint", action="store_true")
