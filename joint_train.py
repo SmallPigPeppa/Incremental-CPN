@@ -46,7 +46,8 @@ def main():
     else:
         raise ValueError("Only [resnet18, resnet50] are currently supported.")
 
-    if args.cifar:
+    cifar = True if 'cifar' in args.dataset else False
+    if cifar:
         encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
         encoder.maxpool = nn.Identity()
 
