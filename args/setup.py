@@ -91,6 +91,9 @@ def parse_args_linear() -> argparse.Namespace:
     if _dali_available and temp_args.data_format == "dali":
         parser = ClassificationDALIDataModule.add_dali_args(parser)
 
+
+    # incremental
+    parser.add_argument("--num_tasks", type=int,default=5)
     # parse args
     args = parser.parse_args()
     additional_setup_linear(args)
