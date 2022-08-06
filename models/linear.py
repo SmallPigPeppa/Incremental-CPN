@@ -62,6 +62,7 @@ class LinearModel(pl.LightningModule):
                  **kwargs, ):
         super(LinearModel, self).__init__()
         self.encoder = encoder
+        self.num_classes=num_classes
         if hasattr(self.encoder, "inplanes"):
             self.features_dim = self.encoder.inplanes
         else:
