@@ -16,7 +16,7 @@ echo "pretrained_path: $pretrained_path"
     --lr 0.5 \
     --lr_decay_steps 60 80 \
     --weight_decay 0 \
-    --batch_size 256 \
+    --batch_size 1024 \
     --num_workers 10 \
     --crop_size 32 \
     --name joint-train-cifar \
@@ -25,5 +25,6 @@ echo "pretrained_path: $pretrained_path"
     --entity pigpeppa \
     --wandb \
     --save_checkpoint \
-    --auto_resume
-
+    --auto_resume \
+    --mean 0.5071 0.4867 0.4408 \
+    --std 0.2675 0.2565 0.2761
