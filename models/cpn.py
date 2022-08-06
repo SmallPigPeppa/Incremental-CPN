@@ -41,8 +41,8 @@ class PrototypeClassifier(nn.Module):
 
 
 class CPNModule(LinearModel):
-    def __init__(self, current_tasks, pl_lambda, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, encoder,current_tasks, pl_lambda, **kwargs):
+        super().__init__(encoder,**kwargs)
         self.current_tasks = current_tasks
         self.classifier = PrototypeClassifier(self.features_dim, self.num_classes)
         self.pl_lambda = pl_lambda
