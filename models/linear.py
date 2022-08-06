@@ -173,7 +173,7 @@ class LinearModel(pl.LightningModule):
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
-        return {'loss': loss}
+        return {"loss": loss,"logits":logits,"targets":targets}
 
     def validation_step(self, batch: List[torch.Tensor], batch_idx: int) -> Dict[str, Any]:
         x, targets = batch
