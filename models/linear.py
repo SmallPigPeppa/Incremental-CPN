@@ -12,7 +12,7 @@ from utils.metrics import accuracy_at_k, weighted_mean
 import warnings
 import numpy as np
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
+from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
 from utils.lars import LARS
 from functools import partial
 from utils.misc import compute_dataset_size
@@ -255,62 +255,54 @@ class LinearModel(pl.LightningModule):
         """
 
         # collect learnable parameters
-        idxs_no_scheduler = [
-            i for i, m in enumerate(self.learnable_params) if m.pop("static_lr", False)
-        ]
+        assert self.optimizer in self._OPTIMIZERS
+        optimizer = self._OPTIMIZERS[self.optimizer]
 
-        # select optimizer
-        if self.optimizer == "sgd":
-            optimizer = torch.optim.SGD
-        elif self.optimizer == "adam":
-            optimizer = torch.optim.Adam
-        else:
-            raise ValueError(f"{self.optimizer} not in (sgd, adam)")
-
-        # create optimizer
         optimizer = optimizer(
-            self.learnable_params,
+            self.classifier.parameters(),
             lr=self.lr,
             weight_decay=self.weight_decay,
             **self.extra_optimizer_args,
         )
-        # optionally wrap with lars
-        if self.lars:
-            optimizer = LARSWrapper(
-                optimizer,
-                eta=self.eta_lars,
-                clip=self.grad_clip_lars,
-                exclude_bias_n_norm=self.exclude_bias_n_norm,
-            )
 
+        # select scheduler
         if self.scheduler == "none":
             return optimizer
-        else:
-            if self.scheduler == "warmup_cosine":
-                scheduler = LinearWarmupCosineAnnealingLR(
+
+        if self.scheduler == "warmup_cosine":
+            max_warmup_steps = (
+                self.warmup_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.warmup_epochs
+            )
+            max_scheduler_steps = (
+                self.max_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.max_epochs
+            )
+            scheduler = {
+                "scheduler": LinearWarmupCosineAnnealingLR(
                     optimizer,
-                    warmup_epochs=self.warmup_epochs,
-                    max_epochs=self.max_epochs,
-                    warmup_start_lr=self.warmup_start_lr,
+                    warmup_epochs=max_warmup_steps,
+                    max_epochs=max_scheduler_steps,
+                    warmup_start_lr=self.warmup_start_lr if self.warmup_epochs > 0 else self.lr,
                     eta_min=self.min_lr,
-                )
-            elif self.scheduler == "cosine":
-                scheduler = CosineAnnealingLR(optimizer, self.max_epochs, eta_min=self.min_lr)
-            elif self.scheduler == "step":
-                scheduler = MultiStepLR(optimizer, self.lr_decay_steps)
-            else:
-                raise ValueError(f"{self.scheduler} not in (warmup_cosine, cosine, step)")
+                ),
+                "interval": self.scheduler_interval,
+                "frequency": 1,
+            }
+        elif self.scheduler == "reduce":
+            scheduler = ReduceLROnPlateau(optimizer)
+        elif self.scheduler == "step":
+            scheduler = MultiStepLR(optimizer, self.lr_decay_steps, gamma=0.1)
+        elif self.scheduler == "exponential":
+            scheduler = ExponentialLR(optimizer, self.weight_decay)
+        else:
+            raise ValueError(
+                f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
+            )
 
-            if idxs_no_scheduler:
-                partial_fn = partial(
-                    static_lr,
-                    get_lr=scheduler.get_lr,
-                    param_group_indexes=idxs_no_scheduler,
-                    lrs_to_replace=[self.lr] * len(idxs_no_scheduler),
-                )
-                scheduler.get_lr = partial_fn
-
-            return [optimizer], [scheduler]
+        return [optimizer], [scheduler]
 
     @staticmethod
     def add_model_specific_args(parent_parser: ArgumentParser) -> ArgumentParser:
