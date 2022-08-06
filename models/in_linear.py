@@ -2,13 +2,8 @@ import torch
 import torch.nn as nn
 import pytorch_lightning as pl
 import torch.nn.functional as F
-import multiprocessing
-from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-from pytorch_lightning.loggers import TensorBoardLogger
-from torchvision import transforms
-import torchvision
-from typing import Any, Callable, Dict, List, Sequence, Tuple, Union
-from metrics import accuracy_at_k, weighted_mean
+from typing import Any, Callable, Dict, List, Sequence, Tuple
+from utils.metrics import accuracy_at_k, weighted_mean
 import warnings
 import numpy as np
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
