@@ -81,7 +81,7 @@ def main():
         model = LinearModel(encoder, tasks=tasks, **args.__dict__)
     elif args.method == 'cpn':
         current_tasks=list(range(100))
-        model = CPNModule(encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda, **args.__dict__)
+        model = CPNModule(encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda,tasks=tasks, **args.__dict__)
 
     make_contiguous(model)
 

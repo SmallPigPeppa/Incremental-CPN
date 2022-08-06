@@ -41,8 +41,8 @@ class PrototypeClassifier(nn.Module):
 
 
 class CPNModule(LinearModel):
-    def __init__(self, encoder,current_tasks, pl_lambda, **kwargs):
-        super().__init__(encoder,**kwargs)
+    def __init__(self, encoder, current_tasks, pl_lambda, tasks, **kwargs):
+        super().__init__(encoder, tasks, **kwargs)
         self.current_tasks = current_tasks
         self.classifier = PrototypeClassifier(self.features_dim, self.num_classes)
         self.pl_lambda = pl_lambda
@@ -59,14 +59,14 @@ class CPNModule(LinearModel):
             torch.Tensor: total loss composed of SimCLR loss and classification loss.
         """
         out = super().training_step(batch, batch_idx)
-        squared_Euclidean_distance=-1.*out["logits"]
+        squared_Euclidean_distance = -1. * out["logits"]
         prototype_loss = torch.index_select(squared_Euclidean_distance, dim=1, index=out["targets"])
         prototype_loss = torch.diagonal(prototype_loss)
         prototype_loss = torch.mean(prototype_loss)
 
         metrics = {
             "prototype_loss": prototype_loss,
-            "pl_lambda":self.pl_lambda
+            "pl_lambda": self.pl_lambda
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
