@@ -11,9 +11,9 @@ echo "pretrained_path: $pretrained_path"
     --devices 0 \
     --accelerator gpu \
     --precision 16 \
-    --optimizer adam \
+    --optimizer sgd \
     --scheduler step \
-    --lr 1.0 \
+    --lr 0.5 \
     --lr_decay_steps 60 80 \
     --weight_decay 0 \
     --batch_size 256 \
