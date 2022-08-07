@@ -144,7 +144,7 @@ if __name__=='__main__':
     for k in list(state.keys()):
         if "conv2d_3x3" in k:
             state[k.replace("conv2d_3x3.", "")] = state[k]
-        del state[k]
+            del state[k]
 
 
     encoder = resnet18()
