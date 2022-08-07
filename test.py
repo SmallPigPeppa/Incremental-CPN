@@ -141,6 +141,12 @@ if __name__=='__main__':
             state[k.replace("backbone.", "")] = state[k]
         del state[k]
 
+    for k in list(state.keys()):
+        if "conv2d_3x3" in k:
+            state[k.replace("conv2d_3x3.", "")] = state[k]
+        del state[k]
+
+
     encoder = resnet50()
     encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
     encoder.maxpool = nn.Identity()
