@@ -70,7 +70,7 @@ import os.path
 
 
 if __name__=='__main__':
-    IMGSIZE = 224
+    IMGSIZE = 32
     LR = 0.1
     GPUS = [0]
     BS0 = 128
