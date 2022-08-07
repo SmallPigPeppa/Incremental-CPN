@@ -137,12 +137,12 @@ if __name__=='__main__':
     for x, y in tqdm(iter(train_loader)):
         x = x.to(device)
         z = encoder(x)
-        x_train.append(z[0].cpu().detach().numpy())
+        x_train.append(z.cpu().detach().numpy())
         y_train.append(y.cpu().detach().numpy())
     for x, y in tqdm(iter(test_loader)):
         x = x.to(device)
         z = encoder(x)
-        x_test.append(z[0].cpu().detach().numpy())
+        x_test.append(z.cpu().detach().numpy())
         y_test.append(y.cpu().detach().numpy())
 
     x_train = np.vstack(x_train)
