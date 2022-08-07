@@ -18,7 +18,7 @@ import warnings
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
 class MLP(LightningModule):
-    def __init__(self, dim_in=2048,dim_out=100):
+    def __init__(self, dim_in=512,dim_out=100):
         super().__init__()
         self.dim_in=dim_in
         self.dim_out=dim_out

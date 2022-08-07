@@ -118,9 +118,9 @@ if __name__=='__main__':
     GPUS = [0]
     BS0 = 128
     BS2 = 512
-    # ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
+    ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
     # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238'
-    ckpt_dir='/share/wenzhuoliu/code/'
+    # ckpt_dir='/share/wenzhuoliu/code/'
     data_path='/mnt/mmtech01/usr/liuwenzhuo/torch_ds'
 
     for filename in os.listdir(ckpt_dir):
@@ -130,7 +130,7 @@ if __name__=='__main__':
             print(f'load ckpt from {ckpt_path}')
 
 
-    state = torch.load(ckpt_path,map_location="cpu")["state_dict"]
+    state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
         if "encoder" in k:
             state[k.replace("encoder", "backbone")] = state[k]
@@ -141,10 +141,6 @@ if __name__=='__main__':
             state[k.replace("backbone.", "")] = state[k]
         del state[k]
 
-    for k in list(state.keys()):
-        if "conv2d_3x3" in k:
-            state[k.replace("conv2d_3x3.", "")] = state[k]
-        del state[k]
 
 
     encoder = resnet50()
