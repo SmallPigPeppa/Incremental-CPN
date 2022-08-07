@@ -106,11 +106,11 @@ if __name__=='__main__':
     encoder.eval()
     encoder.to(device)
     # cifar100
-    # mean = [0.5071, 0.4867, 0.4408]
-    # std = [0.2675, 0.2565, 0.2761]
-    # imagenet
-    mean = [0.485, 0.456, 0.406]
-    std = [0.229, 0.224, 0.225]
+    mean = [0.5071, 0.4867, 0.4408]
+    std = [0.2675, 0.2565, 0.2761]
+    # # imagenet
+    # mean = [0.485, 0.456, 0.406]
+    # std = [0.229, 0.224, 0.225]
     cifar_transforms = transforms.Compose([transforms.Resize(IMGSIZE), transforms.ToTensor(),transforms.Normalize(mean, std)])
     # transforms.CenterCrop(size=96)
     train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
