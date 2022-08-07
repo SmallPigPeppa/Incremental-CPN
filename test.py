@@ -130,7 +130,7 @@ if __name__=='__main__':
             print(f'load ckpt from {ckpt_path}')
 
 
-    state = torch.load(ckpt_path)["state_dict"]
+    state = torch.load(ckpt_path,map_location="cpu")["state_dict"]
     for k in list(state.keys()):
         if "encoder" in k:
             state[k.replace("encoder", "backbone")] = state[k]
