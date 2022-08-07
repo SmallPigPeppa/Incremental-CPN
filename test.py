@@ -59,7 +59,8 @@ class MLP(LightningModule):
             momentum=0.9,
             weight_decay=0.,
         )
-
+        self.scheduler="step"
+        self.lr_decay_steps=[30,60]
         # select scheduler
         if self.scheduler == "none":
             return optimizer
