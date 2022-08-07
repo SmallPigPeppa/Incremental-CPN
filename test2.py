@@ -131,27 +131,35 @@ if __name__=='__main__':
 
 
     state = torch.load(ckpt_path,map_location="cpu")["state_dict"]
-    for k in list(state.keys()):
-        if "encoder" in k:
-            state[k.replace("encoder", "backbone")] = state[k]
-            warnings.warn(
-                "You are using an older checkpoint. Use a new one as some issues might arrise."
-            )
-        if "backbone" in k:
-            state[k.replace("backbone.", "")] = state[k]
-        del state[k]
+    import collections
+    modified_state_dict = collections.OrderedDict()
+    # modified_resnet=resnet18()
+    # modified_resnet_keys=[i for i,_ in modified_resnet.named_parameters()]
+    # for key, value in state_dict.items():
+    #     if 'conv' in key and 'encoder' in key and 'layer' in key:
+    #         a = key.split('.')
+    #         key = f'{a[0]}.{a[1]}.{a[2]}.{a[3]}.conv2d_3x3.{a[4]}'
+    #     modified_state_dict[key] = value
+    # return modified_state_dict
 
-    for k in list(state.keys()):
-        if "conv2d_3x3" in k:
-            state[k.replace("conv2d_3x3.", "")] = state[k]
-            del state[k]
+    for key, value in state.items():
+        if  'encoder' in key :
+            key=key.replace("encoder.", "")
+            if 'conv2d_3x3' in key:
+                key=key.replace("conv2d_3x3.", "")
+            # print(key2)
+        modified_state_dict[key] = value
+
+    # for k in list(state.keys()):
+    #     if "conv2d_3x3" in k:
+    #         state[k.replace("conv2d_3x3.", "")] = state[k]
 
 
     encoder = resnet18()
     encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
     encoder.maxpool = nn.Identity()
     encoder.fc = nn.Identity()
-    encoder.load_state_dict(state, strict=False)
+    encoder.load_state_dict(modified_state_dict, strict=False)
     print(f"Loaded {ckpt_path}")
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
     encoder.eval()
