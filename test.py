@@ -98,9 +98,9 @@ class MLP(LightningModule):
                 f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
             )
 
-        # return [optimizer],[scheduler]
+        return [optimizer],[scheduler]
 
-        return [optimizer]
+        # return [optimizer]
 
 
 import os
