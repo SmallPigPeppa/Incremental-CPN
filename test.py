@@ -15,6 +15,8 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from tqdm import tqdm
 from torchvision.models import resnet18, resnet50
 import warnings
+from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
+from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
 class MLP(LightningModule):
     def __init__(self, dim_in=2048,dim_out=100):
         super().__init__()
@@ -55,9 +57,49 @@ class MLP(LightningModule):
             self.parameters(),
             lr=LR,
             momentum=0.9,
-            weight_decay=5e-4,
+            weight_decay=0.,
         )
-        return {"optimizer": optimizer}
+
+        # select scheduler
+        if self.scheduler == "none":
+            return optimizer
+
+        if self.scheduler == "warmup_cosine":
+            max_warmup_steps = (
+                self.warmup_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.warmup_epochs
+            )
+            max_scheduler_steps = (
+                self.max_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.max_epochs
+            )
+            scheduler = {
+                "scheduler": LinearWarmupCosineAnnealingLR(
+                    optimizer,
+                    warmup_epochs=max_warmup_steps,
+                    max_epochs=max_scheduler_steps,
+                    warmup_start_lr=self.warmup_start_lr if self.warmup_epochs > 0 else self.lr,
+                    eta_min=self.min_lr,
+                ),
+                "interval": self.scheduler_interval,
+                "frequency": 1,
+            }
+        elif self.scheduler == "reduce":
+            scheduler = ReduceLROnPlateau(optimizer)
+        elif self.scheduler == "step":
+            scheduler = MultiStepLR(optimizer, self.lr_decay_steps, gamma=0.1)
+        elif self.scheduler == "exponential":
+            scheduler = ExponentialLR(optimizer, self.weight_decay)
+        else:
+            raise ValueError(
+                f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
+            )
+
+        # return [optimizer],[scheduler]
+
+        return [optimizer]
 
 
 import os
