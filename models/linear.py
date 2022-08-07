@@ -222,26 +222,15 @@ class LinearModel(pl.LightningModule):
         if hasattr(self, "_current_task_idx"):
             assert new_task >= self._current_task_idx
         self._current_task_idx = new_task
-
-
-    def configure_optimizers(self) -> Tuple[List, List]:
-        """Collects learnable parameters and configures the optimizer and learning rate scheduler.
-
-        Returns:
-            Tuple[List, List]: two lists containing the optimizer and the scheduler.
-        """
-
-        # collect learnable parameters
-        assert self.optimizer in self._OPTIMIZERS
-        optimizer = self._OPTIMIZERS[self.optimizer]
-
-        optimizer = optimizer(
-            self.classifier.parameters(),
-            lr=self.lr,
-            weight_decay=self.weight_decay,
-            **self.extra_optimizer_args,
+    def configure_optimizers(self):
+        optimizer = torch.optim.SGD(
+            self.parameters(),
+            lr=LR,
+            momentum=0.9,
+            weight_decay=0.,
         )
-
+        self.scheduler="step"
+        self.lr_decay_steps=[30,60]
         # select scheduler
         if self.scheduler == "none":
             return optimizer
@@ -279,7 +268,66 @@ class LinearModel(pl.LightningModule):
                 f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
             )
 
-        return [optimizer], [scheduler]
+        return [optimizer],[scheduler]
+
+        # return [optimizer]
+
+    # def configure_optimizers(self) -> Tuple[List, List]:
+    #     """Collects learnable parameters and configures the optimizer and learning rate scheduler.
+    #
+    #     Returns:
+    #         Tuple[List, List]: two lists containing the optimizer and the scheduler.
+    #     """
+    #
+    #     # collect learnable parameters
+    #     assert self.optimizer in self._OPTIMIZERS
+    #     optimizer = self._OPTIMIZERS[self.optimizer]
+    #
+    #     optimizer = optimizer(
+    #         self.classifier.parameters(),
+    #         lr=self.lr,
+    #         weight_decay=self.weight_decay,
+    #         **self.extra_optimizer_args,
+    #     )
+    #
+    #     # select scheduler
+    #     if self.scheduler == "none":
+    #         return optimizer
+    #
+    #     if self.scheduler == "warmup_cosine":
+    #         max_warmup_steps = (
+    #             self.warmup_epochs * self.num_training_steps
+    #             if self.scheduler_interval == "step"
+    #             else self.warmup_epochs
+    #         )
+    #         max_scheduler_steps = (
+    #             self.max_epochs * self.num_training_steps
+    #             if self.scheduler_interval == "step"
+    #             else self.max_epochs
+    #         )
+    #         scheduler = {
+    #             "scheduler": LinearWarmupCosineAnnealingLR(
+    #                 optimizer,
+    #                 warmup_epochs=max_warmup_steps,
+    #                 max_epochs=max_scheduler_steps,
+    #                 warmup_start_lr=self.warmup_start_lr if self.warmup_epochs > 0 else self.lr,
+    #                 eta_min=self.min_lr,
+    #             ),
+    #             "interval": self.scheduler_interval,
+    #             "frequency": 1,
+    #         }
+    #     elif self.scheduler == "reduce":
+    #         scheduler = ReduceLROnPlateau(optimizer)
+    #     elif self.scheduler == "step":
+    #         scheduler = MultiStepLR(optimizer, self.lr_decay_steps, gamma=0.1)
+    #     elif self.scheduler == "exponential":
+    #         scheduler = ExponentialLR(optimizer, self.weight_decay)
+    #     else:
+    #         raise ValueError(
+    #             f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
+    #         )
+    #
+    #     return [optimizer], [scheduler]
 
     @staticmethod
     def add_model_specific_args(parent_parser: ArgumentParser) -> ArgumentParser:
