@@ -118,8 +118,8 @@ if __name__=='__main__':
     GPUS = [0]
     BS0 = 128
     BS2 = 512
-    ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
-    # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238'
+    # ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
+    ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238'
     # ckpt_dir='/share/wenzhuoliu/code/'
     data_path='/mnt/mmtech01/usr/liuwenzhuo/torch_ds'
 
