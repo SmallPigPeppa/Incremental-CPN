@@ -17,11 +17,13 @@ from torchvision.models import resnet18, resnet50
 import warnings
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
+
+
 class MLP(LightningModule):
-    def __init__(self, dim_in=2048,dim_out=100):
+    def __init__(self, dim_in=2048, dim_out=100):
         super().__init__()
-        self.dim_in=dim_in
-        self.dim_out=dim_out
+        self.dim_in = dim_in
+        self.dim_out = dim_out
         self.model = nn.Linear(dim_in, dim_out)
 
     def forward(self, x):
@@ -59,8 +61,8 @@ class MLP(LightningModule):
             momentum=0.9,
             weight_decay=0.,
         )
-        self.scheduler="step"
-        self.lr_decay_steps=[30,60]
+        self.scheduler = "step"
+        self.lr_decay_steps = [30, 60]
         # select scheduler
         if self.scheduler == "none":
             return optimizer
@@ -98,7 +100,7 @@ class MLP(LightningModule):
                 f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
             )
 
-        return [optimizer],[scheduler]
+        return [optimizer], [scheduler]
 
         # return [optimizer]
 
@@ -107,12 +109,7 @@ import os
 
 import os.path
 
-
-
-
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     IMGSIZE = 32
     LR = 0.1
     GPUS = [0]
@@ -121,17 +118,18 @@ if __name__=='__main__':
     # ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
     # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238'
     # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/mocov2plus/1kguyx5e'
-    ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug'
+    ckpt_dir = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug'
 
     # ckpt_dir='/share/wenzhuoliu/code/'
-    data_path='/mnt/mmtech01/usr/liuwenzhuo/torch_ds'
+    data_path = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds'
 
     # for filename in os.listdir(ckpt_dir):
     #     basename, ext = os.path.splitext(filename)
     #     if ext == '.ckpt':
     #         ckpt_path = os.path.join(ckpt_dir, filename)
     #         print(f'load ckpt from {ckpt_path}')
-    ckpt_path='/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=874.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=874.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
 
     state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
@@ -143,8 +141,6 @@ if __name__=='__main__':
         if "backbone" in k:
             state[k.replace("backbone.", "")] = state[k]
         del state[k]
-
-
 
     encoder = resnet50()
     encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
@@ -161,7 +157,8 @@ if __name__=='__main__':
     # # imagenet
     # mean = [0.485, 0.456, 0.406]
     # std = [0.229, 0.224, 0.225]
-    cifar_transforms = transforms.Compose([transforms.Resize(IMGSIZE), transforms.ToTensor(),transforms.Normalize(mean, std)])
+    cifar_transforms = transforms.Compose(
+        [transforms.Resize(IMGSIZE), transforms.ToTensor(), transforms.Normalize(mean, std)])
     # transforms.CenterCrop(size=96)
     train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
                                                   transform=cifar_transforms,
@@ -200,8 +197,8 @@ if __name__=='__main__':
     y_train = np.hstack(y_train)
     y_test = np.hstack(y_test)
 
-    print(x_train.shape,y_train.shape)
-    print(x_test.shape,y_test.shape)
+    print(x_train.shape, y_train.shape)
+    print(x_test.shape, y_test.shape)
     # ds pretrained
     train_dataset = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
     test_dataset = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
