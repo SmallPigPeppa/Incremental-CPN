@@ -130,6 +130,7 @@ if __name__ == '__main__':
     #         print(f'load ckpt from {ckpt_path}')
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=874.ckpt'
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=437.ckpt'
 
     state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
