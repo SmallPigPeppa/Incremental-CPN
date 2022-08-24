@@ -85,7 +85,7 @@ class MLP(LightningModule):
             self.parameters(),
             lr=LR,
             momentum=0.9,
-            weight_decay=0.,
+            weight_decay=1e-5,
         )
         self.scheduler = "step"
         self.lr_decay_steps = [30, 60]
@@ -155,6 +155,7 @@ if __name__ == '__main__':
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
+                transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
             ]
