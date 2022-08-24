@@ -199,38 +199,11 @@ if __name__ == '__main__':
     # test_dataset = torchvision.datasets.CIFAR100(root='~/torch_ds', split='test',
     #                                                            transform=stl_transform,
     #                                                            download=True)
-    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=8,
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=8,
                               pin_memory=True)
-    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True, num_workers=8,
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True, num_workers=8,
                              pin_memory=True)
-    x_train = []
-    x_test = []
-    y_train = []
-    y_test = []
-    # encoder = nn.DataParallel(encoder)
-    # for x, y in tqdm(iter(train_loader)):
-    #     x = x.to(device)
-    #     z = encoder(x)
-    #     x_train.append(z.cpu().detach().numpy())
-    #     y_train.append(y.cpu().detach().numpy())
-    # for x, y in tqdm(iter(test_loader)):
-    #     x = x.to(device)
-    #     z = encoder(x)
-    #     x_test.append(z.cpu().detach().numpy())
-    #     y_test.append(y.cpu().detach().numpy())
-    #
-    # x_train = np.vstack(x_train)
-    # x_test = np.vstack(x_test)
-    # y_train = np.hstack(y_train)
-    # y_test = np.hstack(y_test)
-    #
-    # print(x_train.shape,y_train.shape)
-    # print(x_test.shape,y_test.shape)
-    # # ds pretrained
-    # train_dataset = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
-    # test_dataset = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
-    # train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    # test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+
 
     model = MLP()
     wandb_logger = WandbLogger(
@@ -251,10 +224,3 @@ if __name__ == '__main__':
 
     trainer.fit(model, train_loader, test_loader)
 
-    '''
-    x, y = next(iter(train_loader))
-    print(x)
-    print(y)
-    out = simclr_resnet50(x)
-    print(out)
-    '''
