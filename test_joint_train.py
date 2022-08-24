@@ -237,7 +237,7 @@ if __name__ == '__main__':
         name="joint-train-cifar-simclr",
         project="Incremental-CPN",
         entity="pigpeppa",
-        offline=True,
+        offline=False,
         resume=None,
         id=None,
     )
