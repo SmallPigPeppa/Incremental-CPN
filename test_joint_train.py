@@ -48,7 +48,7 @@ class MLP(LightningModule):
         self.encoder=encoder
 
     def forward(self, x):
-        with torch.no_grad:
+        with torch.no_grad():
             x=self.encoder(x)
         out = self.model(x)
         return F.log_softmax(out, dim=1)
