@@ -71,12 +71,11 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
     Returns:
         Tuple[nn.Module, nn.Module]: training and validation transformation pipelines.
     """
-
+    # transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
+    # transforms.RandomHorizontalFlip(),
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
-                transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
-                transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
             ]
