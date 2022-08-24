@@ -85,7 +85,7 @@ class MLP(LightningModule):
             self.parameters(),
             lr=LR,
             momentum=0.9,
-            weight_decay=0.,
+            weight_decay=1e-4,
         )
         self.scheduler = "step"
         self.lr_decay_steps = [30, 60]
@@ -141,43 +141,7 @@ if __name__ == '__main__':
     GPUS = [0]
     BS0 = 128
     BS2 = 512
-    # # ckpt_dir='/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572'
-    # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238'
-    # # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/mocov2plus/1kguyx5e'
-    # # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug'
-    #
-    # # ckpt_dir='/share/wenzhuoliu/code/'
     data_path = '/share/wenzhuoliu/torch_ds'
-
-    # for filename in os.listdir(ckpt_dir):
-    #     basename, ext = os.path.splitext(filename)
-    #     if ext == '.ckpt':
-    #         ckpt_path = os.path.join(ckpt_dir, filename)
-    #         print(f'load ckpt from {ckpt_path}')
-    #
-    #
-    # state = torch.load(ckpt_path)["state_dict"]
-    # for k in list(state.keys()):
-    #     if "encoder" in k:
-    #         state[k.replace("encoder", "backbone")] = state[k]
-    #         warnings.warn(
-    #             "You are using an older checkpoint. Use a new one as some issues might arrise."
-    #         )
-    #     if "backbone" in k:
-    #         state[k.replace("backbone.", "")] = state[k]
-    #     del state[k]
-    #
-    #
-    #
-    # encoder = resnet50()
-    # encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
-    # encoder.maxpool = nn.Identity()
-    # encoder.fc = nn.Identity()
-    # encoder.load_state_dict(state, strict=False)
-    # print(f"Loaded {ckpt_path}")
-    # device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
-    # encoder.eval()
-    # encoder.to(device)
     # cifar100
     mean = [0.5071, 0.4867, 0.4408]
     std = [0.2675, 0.2565, 0.2761]
@@ -187,23 +151,35 @@ if __name__ == '__main__':
     cifar_transforms = transforms.Compose(
         [transforms.Resize(IMGSIZE), transforms.ToTensor(), transforms.Normalize(mean, std)])
     # transforms.CenterCrop(size=96)
+
+    cifar_pipeline = {
+        "T_train": transforms.Compose(
+            [
+                transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+            ]
+        ),
+        "T_val": transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+            ]
+        ),
+    }
+
     train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
-                                                  transform=cifar_transforms,
+                                                  transform=cifar_pipeline["T_train"],
                                                   download=True)
     test_dataset = torchvision.datasets.CIFAR100(root=data_path, train=False,
-                                                 transform=cifar_transforms,
+                                                 transform=cifar_pipeline["T_val"],
                                                  download=True)
-    # train_dataset = torchvision.datasets.CIFAR100(root='~/torch_ds', split='train',
-    #                                                            transform=stl_transform,
-    #                                                            download=True)
-    # test_dataset = torchvision.datasets.CIFAR100(root='~/torch_ds', split='test',
-    #                                                            transform=stl_transform,
-    #                                                            download=True)
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=8,
-                              pin_memory=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True, num_workers=8,
-                             pin_memory=True)
 
+    train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=8,
+                              pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=256, shuffle=True, num_workers=8,
+                             pin_memory=True)
 
     model = MLP()
     wandb_logger = WandbLogger(
@@ -219,8 +195,8 @@ if __name__ == '__main__':
         max_epochs=100,
         gpus=GPUS,
         logger=wandb_logger,
-        checkpoint_callback=False
+        checkpoint_callback=False,
+        precision=16
     )
 
     trainer.fit(model, train_loader, test_loader)
-
