@@ -85,7 +85,7 @@ class MLP(LightningModule):
             self.parameters(),
             lr=LR,
             momentum=0.9,
-            weight_decay=1e-4,
+            weight_decay=0.,
         )
         self.scheduler = "step"
         self.lr_decay_steps = [30, 60]
