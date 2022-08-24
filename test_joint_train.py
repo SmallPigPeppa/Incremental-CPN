@@ -18,15 +18,18 @@ import warnings
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
 from pytorch_lightning.loggers import WandbLogger
+
+
 class MLP(LightningModule):
-    def __init__(self, dim_in=2048,dim_out=100):
+    def __init__(self, dim_in=2048, dim_out=100):
         super().__init__()
-        self.dim_in=dim_in
-        self.dim_out=dim_out
+        self.dim_in = dim_in
+        self.dim_out = dim_out
         self.model = nn.Linear(dim_in, dim_out)
 
         # ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=437.ckpt'
-        ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
+        # ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
+        ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/simclr/2mv95572/simclr-imagenet32-2mv95572-ep=999.ckpt'
 
         state = torch.load(ckpt_path)["state_dict"]
         for k in list(state.keys()):
@@ -45,11 +48,11 @@ class MLP(LightningModule):
         encoder.fc = nn.Identity()
         encoder.load_state_dict(state, strict=False)
 
-        self.encoder=encoder
+        self.encoder = encoder
 
     def forward(self, x):
         with torch.no_grad():
-            x=self.encoder(x)
+            x = self.encoder(x)
         out = self.model(x)
         return F.log_softmax(out, dim=1)
 
@@ -84,8 +87,8 @@ class MLP(LightningModule):
             momentum=0.9,
             weight_decay=0.,
         )
-        self.scheduler="step"
-        self.lr_decay_steps=[30,60]
+        self.scheduler = "step"
+        self.lr_decay_steps = [30, 60]
         # select scheduler
         if self.scheduler == "none":
             return optimizer
@@ -123,7 +126,7 @@ class MLP(LightningModule):
                 f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
             )
 
-        return [optimizer],[scheduler]
+        return [optimizer], [scheduler]
 
         # return [optimizer]
 
@@ -132,12 +135,7 @@ import os
 
 import os.path
 
-
-
-
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     IMGSIZE = 32
     LR = 0.1
     GPUS = [0]
@@ -149,7 +147,7 @@ if __name__=='__main__':
     # # ckpt_dir='/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug'
     #
     # # ckpt_dir='/share/wenzhuoliu/code/'
-    data_path='/share/wenzhuoliu/torch_ds'
+    data_path = '/share/wenzhuoliu/torch_ds'
 
     # for filename in os.listdir(ckpt_dir):
     #     basename, ext = os.path.splitext(filename)
@@ -186,7 +184,8 @@ if __name__=='__main__':
     # # imagenet
     # mean = [0.485, 0.456, 0.406]
     # std = [0.229, 0.224, 0.225]
-    cifar_transforms = transforms.Compose([transforms.Resize(IMGSIZE), transforms.ToTensor(),transforms.Normalize(mean, std)])
+    cifar_transforms = transforms.Compose(
+        [transforms.Resize(IMGSIZE), transforms.ToTensor(), transforms.Normalize(mean, std)])
     # transforms.CenterCrop(size=96)
     train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
                                                   transform=cifar_transforms,
@@ -235,7 +234,7 @@ if __name__=='__main__':
 
     model = MLP()
     wandb_logger = WandbLogger(
-        name="joint-train-cifar",
+        name="joint-train-cifar-simclr",
         project="Incremental-CPN",
         entity="pigpeppa",
         offline=True,
@@ -246,7 +245,7 @@ if __name__=='__main__':
         progress_bar_refresh_rate=10,
         max_epochs=100,
         gpus=GPUS,
-        logger=TensorBoardLogger(f"./logs/", name=f"linear-eval-cifar"),
+        logger=wandb_logger,
         checkpoint_callback=False
     )
 
