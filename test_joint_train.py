@@ -139,8 +139,6 @@ if __name__ == '__main__':
     IMGSIZE = 32
     LR = 0.1
     GPUS = [0]
-    BS0 = 128
-    BS2 = 512
     data_path = '/share/wenzhuoliu/torch_ds'
     # cifar100
     mean = [0.5071, 0.4867, 0.4408]
@@ -155,8 +153,8 @@ if __name__ == '__main__':
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
-                transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
                 transforms.ToTensor(),
+                transforms.RandomHorizontalFlip(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
             ]
         ),
