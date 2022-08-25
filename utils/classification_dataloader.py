@@ -39,7 +39,8 @@ else:
 
 def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     assert len(dataset.classes) == sum([len(t) for t in tasks])
-    mask = [(c in tasks[task_idx]) for c in dataset.targets]
+    current_task = [tasks[i] for i in task_idx]
+    mask = [(c in current_task) for c in dataset.targets]
     indexes = torch.tensor(mask).nonzero()
     task_dataset = Subset(dataset, indexes)
     return task_dataset
@@ -347,12 +348,12 @@ def prepare_data(
         train_dataset = split_dataset(
             train_dataset,
             tasks=tasks,
-            task_idx=task_idx,
+            task_idx=list(range(task_idx + 1)),
         )
         val_dataset = split_dataset(
             val_dataset,
             tasks=tasks,
-            task_idx=list(range(task_idx+1)),
+            task_idx=list(range(task_idx + 1)),
         )
     train_loader, val_loader = prepare_dataloaders(
         train_dataset,
