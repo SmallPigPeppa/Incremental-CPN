@@ -134,10 +134,8 @@ def main():
                 project=args.project,
                 entity=args.entity,
                 offline=args.offline,
-                resume=None,
-                id=None,
             )
-            wandb_logger.log_hyperparams(args)
+            # wandb_logger.log_hyperparams(args)
 
             # lr logging
             lr_monitor = LearningRateMonitor(logging_interval="step")
