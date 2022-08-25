@@ -39,7 +39,7 @@ else:
 
 def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     assert len(dataset.classes) == sum([len(t) for t in tasks])
-    current_task=torch.stack((tasks[i] for i in task_idx))
+    current_task=torch.stack(tuple(tasks[i] for i in task_idx))
     print(tasks[0])
     print(current_task)
     print(tasks)
