@@ -124,57 +124,57 @@ def main():
             # use normal torchvision dataloader for validation to save memory
             dali_datamodule.val_dataloader = lambda: val_loader
 
-            # 1.7 will deprecate resume_from_checkpoint, but for the moment
-            # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
-            callbacks = []
-            # wandb logging
-            if args.wandb:
-                wandb_logger = WandbLogger(
-                    name=f"{args.name}-task{task_idx}",
-                    project=args.project,
-                    entity=args.entity,
-                    offline=args.offline,
-                    resume=None,
-                    id=None,
-                )
-                wandb_logger.watch(model, log="gradients", log_freq=100)
-                wandb_logger.log_hyperparams(args)
-
-                # lr logging
-                lr_monitor = LearningRateMonitor(logging_interval="step")
-                callbacks.append(lr_monitor)
-
-            trainer = Trainer.from_argparse_args(
-                args,
-                logger=wandb_logger if args.wandb else None,
-                callbacks=callbacks,
-                enable_checkpointing=False,
-                strategy=DDPStrategy(find_unused_parameters=False)
-                if args.strategy == "ddp"
-                else args.strategy,
+        # 1.7 will deprecate resume_from_checkpoint, but for the moment
+        # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
+        callbacks = []
+        # wandb logging
+        if args.wandb:
+            wandb_logger = WandbLogger(
+                name=f"{args.name}-task{task_idx}",
+                project=args.project,
+                entity=args.entity,
+                offline=args.offline,
+                resume=None,
+                id=None,
             )
+            wandb_logger.watch(model, log="gradients", log_freq=100)
+            wandb_logger.log_hyperparams(args)
 
-            # fix for incompatibility with nvidia-dali and pytorch lightning
-            # with dali 1.15 (this will be fixed on 1.16)
-            # https://github.com/Lightning-AI/lightning/issues/12956
-            try:
-                from pytorch_lightning.loops import FitLoop
+            # lr logging
+            lr_monitor = LearningRateMonitor(logging_interval="step")
+            callbacks.append(lr_monitor)
 
-                class WorkaroundFitLoop(FitLoop):
-                    @property
-                    def prefetch_batches(self) -> int:
-                        return 1
+        trainer = Trainer.from_argparse_args(
+            args,
+            logger=wandb_logger if args.wandb else None,
+            callbacks=callbacks,
+            enable_checkpointing=False,
+            strategy=DDPStrategy(find_unused_parameters=False)
+            if args.strategy == "ddp"
+            else args.strategy,
+        )
 
-                trainer.fit_loop = WorkaroundFitLoop(
-                    trainer.fit_loop.min_epochs, trainer.fit_loop.max_epochs
-                )
-            except:
-                pass
+        # fix for incompatibility with nvidia-dali and pytorch lightning
+        # with dali 1.15 (this will be fixed on 1.16)
+        # https://github.com/Lightning-AI/lightning/issues/12956
+        try:
+            from pytorch_lightning.loops import FitLoop
 
-            if args.data_format == "dali":
-                trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
-            else:
-                trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+            class WorkaroundFitLoop(FitLoop):
+                @property
+                def prefetch_batches(self) -> int:
+                    return 1
+
+            trainer.fit_loop = WorkaroundFitLoop(
+                trainer.fit_loop.min_epochs, trainer.fit_loop.max_epochs
+            )
+        except:
+            pass
+
+        if args.data_format == "dali":
+            trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
+        else:
+            trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
 
 
 if __name__ == "__main__":
