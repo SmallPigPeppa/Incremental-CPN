@@ -37,7 +37,7 @@ else:
     _h5_available = True
 
 
-def split_dataset(dataset: Dataset, task_idx: int, tasks: list = None):
+def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     assert len(dataset.classes) == sum([len(t) for t in tasks])
     mask = [(c in tasks[task_idx]) for c in dataset.targets]
     indexes = torch.tensor(mask).nonzero()
@@ -352,7 +352,7 @@ def prepare_data(
         val_dataset = split_dataset(
             val_dataset,
             tasks=tasks,
-            task_idx=task_idx,
+            task_idx=list(range(task_idx+1)),
         )
     train_loader, val_loader = prepare_dataloaders(
         train_dataset,
