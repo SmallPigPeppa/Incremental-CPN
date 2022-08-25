@@ -137,7 +137,6 @@ def main():
                 resume=None,
                 id=None,
             )
-            wandb_logger.watch(model, log="gradients", log_freq=100)
             wandb_logger.log_hyperparams(args)
 
             # lr logging
