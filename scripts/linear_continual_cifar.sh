@@ -9,7 +9,7 @@ echo "pretrained_path: $pretrained_path"
     --encoder resnet50 \
     --train_data_path ${data_path} \
     --val_data_path ${data_path} \
-    --max_epochs 1 \
+    --max_epochs 100 \
     --devices 0 \
     --accelerator gpu \
     --precision 16 \
