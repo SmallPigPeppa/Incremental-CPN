@@ -76,6 +76,7 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
+                transforms.RandomResizedCrop(size=32, scale=(0.8, 1.0)),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),

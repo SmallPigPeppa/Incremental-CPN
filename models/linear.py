@@ -227,7 +227,7 @@ class LinearModel(pl.LightningModule):
             self.parameters(),
             lr=0.4,
             momentum=0.9,
-            weight_decay=0.,
+            weight_decay=1e-4,
         )
         self.scheduler="step"
         self.lr_decay_steps=[30,60]
