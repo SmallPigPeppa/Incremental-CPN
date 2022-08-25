@@ -208,8 +208,8 @@ class LinearModel(pl.LightningModule):
             assert self.tasks is not None
             for task_idx, task in enumerate(self.tasks):
                 mask_task = np.isin(targets, np.array(task))
-                if len(mask_task) > 0:
-                    correct_task = np.logical_and(mask_task, mask_correct).sum()
+                correct_task = np.logical_and(mask_task, mask_correct).sum()
+                if mask_task.sum()>0:
                     log[f"val_acc1_task{task_idx}"] = correct_task / mask_task.sum()
                 else:
                     log[f"val_acc1_task{task_idx}"] = -1
