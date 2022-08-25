@@ -349,6 +349,11 @@ def prepare_data(
             tasks=tasks,
             task_idx=task_idx,
         )
+        val_dataset = split_dataset(
+            val_dataset,
+            tasks=tasks,
+            task_idx=task_idx,
+        )
     train_loader, val_loader = prepare_dataloaders(
         train_dataset,
         val_dataset,
