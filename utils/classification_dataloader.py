@@ -39,8 +39,9 @@ else:
 
 def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     assert len(dataset.classes) == sum([len(t) for t in tasks])
-    current_task = [tasks[i] for i in task_idx]
+    current_task = torch.tensor([tasks[i] for i in task_idx])
     print(tasks[0])
+    print(current_task)
     mask = [(c in current_task) for c in dataset.targets]
     indexes = torch.tensor(mask).nonzero()
     task_dataset = Subset(dataset, indexes)
