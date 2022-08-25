@@ -11,6 +11,7 @@ from torchvision.models import resnet18, resnet50
 from pytorch_lightning.strategies.ddp import DDPStrategy
 from args.setup import parse_args_linear
 from utils.auto_resumer import AutoResumer
+import wandb
 
 try:
     from cassle.methods.dali import ClassificationABC
@@ -173,6 +174,7 @@ def main():
         else:
             trainer.fit(model, train_loader, val_loader, ckpt_path=None)
 
+        wandb.finish()
 
 if __name__ == "__main__":
     main()
