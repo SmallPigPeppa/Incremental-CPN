@@ -208,8 +208,11 @@ class LinearModel(pl.LightningModule):
             assert self.tasks is not None
             for task_idx, task in enumerate(self.tasks):
                 mask_task = np.isin(targets, np.array(task))
-                correct_task = np.logical_and(mask_task, mask_correct).sum()
-                log[f"val_acc1_task{task_idx}"] = correct_task / mask_task.sum()
+                if len(mask_task) > 0:
+                    correct_task = np.logical_and(mask_task, mask_correct).sum()
+                    log[f"val_acc1_task{task_idx}"] = correct_task / mask_task.sum()
+                else:
+                    log[f"val_acc1_task{task_idx}"] = -1
 
         self.log_dict(log, sync_dist=True)
 
@@ -222,6 +225,7 @@ class LinearModel(pl.LightningModule):
         if hasattr(self, "_current_task_idx"):
             assert new_task >= self._current_task_idx
         self._current_task_idx = new_task
+
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(
             self.parameters(),
@@ -229,8 +233,8 @@ class LinearModel(pl.LightningModule):
             momentum=0.9,
             weight_decay=1e-4,
         )
-        self.scheduler="step"
-        self.lr_decay_steps=[30,60]
+        self.scheduler = "step"
+        self.lr_decay_steps = [30, 60]
         # select scheduler
         if self.scheduler == "none":
             return optimizer
@@ -268,7 +272,7 @@ class LinearModel(pl.LightningModule):
                 f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
             )
 
-        return [optimizer],[scheduler]
+        return [optimizer], [scheduler]
 
         # return [optimizer]
 
