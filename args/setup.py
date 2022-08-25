@@ -30,7 +30,6 @@ from args.utils import additional_setup_linear
 from utils.auto_resumer import AutoResumer
 from utils.checkpointer import Checkpointer
 
-
 try:
     from utils.auto_umap import AutoUMAP
 except ImportError:
@@ -44,8 +43,6 @@ except ImportError:
     _dali_available = False
 else:
     _dali_available = True
-
-
 
 
 def parse_args_linear() -> argparse.Namespace:
@@ -75,7 +72,7 @@ def parse_args_linear() -> argparse.Namespace:
     # linear model
     from models.linear import LinearModel
     from models.cpn import CPNModule
-    parser =CPNModule.add_model_specific_args(parser)
+    parser = CPNModule.add_model_specific_args(parser)
 
     # THIS LINE IS KEY TO PULL WANDB AND SAVE_CHECKPOINT
     parser.add_argument("--save_checkpoint", action="store_true")
@@ -92,12 +89,11 @@ def parse_args_linear() -> argparse.Namespace:
     if _dali_available and temp_args.data_format == "dali":
         parser = ClassificationDALIDataModule.add_dali_args(parser)
 
-
     # incremental
-    parser.add_argument("--num_tasks", type=int,default=5)
+    parser.add_argument("--num_tasks", type=int, default=5)
+    parser.add_argument("--method", type=str, default="linear")
     # parse args
     args = parser.parse_args()
     additional_setup_linear(args)
 
     return args
-

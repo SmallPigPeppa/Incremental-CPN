@@ -19,13 +19,15 @@
 
 import os
 from pathlib import Path
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union, List
 
 import torchvision
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
+import torch
+from torch.utils.data.dataset import Dataset, Subset
 
 try:
     from solo.utils.h5_dataset import H5Dataset
@@ -33,6 +35,14 @@ except ImportError:
     _h5_available = False
 else:
     _h5_available = True
+
+
+def split_dataset(dataset: Dataset, task_idx: int, tasks: list = None):
+    assert len(dataset.classes) == sum([len(t) for t in tasks])
+    mask = [(c in tasks[task_idx]) for c in dataset.targets]
+    indexes = torch.tensor(mask).nonzero()
+    task_dataset = Subset(dataset, indexes)
+    return task_dataset
 
 
 def build_custom_pipeline():
@@ -166,14 +176,14 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
 
 
 def prepare_datasets(
-    dataset: str,
-    T_train: Callable,
-    T_val: Callable,
-    train_data_path: Optional[Union[str, Path]] = None,
-    val_data_path: Optional[Union[str, Path]] = None,
-    data_format: Optional[str] = "image_folder",
-    download: bool = True,
-    data_fraction: float = -1.0,
+        dataset: str,
+        T_train: Callable,
+        T_val: Callable,
+        train_data_path: Optional[Union[str, Path]] = None,
+        val_data_path: Optional[Union[str, Path]] = None,
+        data_format: Optional[str] = "image_folder",
+        download: bool = True,
+        data_fraction: float = -1.0,
 ) -> Tuple[Dataset, Dataset]:
     """Prepares train and val datasets.
 
@@ -202,7 +212,7 @@ def prepare_datasets(
         sandbox_folder = Path(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         val_data_path = sandbox_folder / "datasets"
 
-    assert dataset in ["cifar10", "cifar100", "stl10", "imagenet", "imagenet100", "custom","imagenet32"]
+    assert dataset in ["cifar10", "cifar100", "stl10", "imagenet", "imagenet100", "custom", "imagenet32"]
 
     if dataset in ["cifar10", "cifar100"]:
         DatasetClass = vars(torchvision.datasets)[dataset.upper()]
@@ -234,7 +244,7 @@ def prepare_datasets(
             transform=T_val,
         )
 
-    elif dataset in ["imagenet", "imagenet100", "custom","imagenet32"]:
+    elif dataset in ["imagenet", "imagenet100", "custom", "imagenet32"]:
         if data_format == "h5":
             assert _h5_available
             train_dataset = H5Dataset(dataset, train_data_path, T_train)
@@ -260,7 +270,7 @@ def prepare_datasets(
 
 
 def prepare_dataloaders(
-    train_dataset: Dataset, val_dataset: Dataset, batch_size: int = 64, num_workers: int = 4
+        train_dataset: Dataset, val_dataset: Dataset, batch_size: int = 64, num_workers: int = 4
 ) -> Tuple[DataLoader, DataLoader]:
     """Wraps a train and a validation dataset with a DataLoader.
 
@@ -292,14 +302,16 @@ def prepare_dataloaders(
 
 
 def prepare_data(
-    dataset: str,
-    train_data_path: Optional[Union[str, Path]] = None,
-    val_data_path: Optional[Union[str, Path]] = None,
-    data_format: Optional[str] = "image_folder",
-    batch_size: int = 64,
-    num_workers: int = 4,
-    download: bool = True,
-    data_fraction: float = -1.0,
+        dataset: str,
+        train_data_path: Optional[Union[str, Path]] = None,
+        val_data_path: Optional[Union[str, Path]] = None,
+        data_format: Optional[str] = "image_folder",
+        batch_size: int = 64,
+        num_workers: int = 4,
+        download: bool = True,
+        data_fraction: float = -1.0,
+        tasks: list = None,
+        task_idx: int = 0
 ) -> Tuple[DataLoader, DataLoader]:
     """Prepares transformations, creates dataset objects and wraps them in dataloaders.
 
@@ -331,6 +343,12 @@ def prepare_data(
         download=download,
         data_fraction=data_fraction,
     )
+    if tasks is not None:
+        train_dataset = split_dataset(
+            train_dataset,
+            tasks=tasks,
+            task_idx=task_idx,
+        )
     train_loader, val_loader = prepare_dataloaders(
         train_dataset,
         val_dataset,

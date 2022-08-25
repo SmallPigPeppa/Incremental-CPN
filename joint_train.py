@@ -32,7 +32,6 @@ else:
     _dali_avaliable = True
 from args.setup import parse_args_linear
 
-
 def main():
     seed_everything(5)
 
@@ -98,6 +97,7 @@ def main():
         num_workers=args.num_workers,
     )
 
+
     if args.data_format == "dali":
         assert (
             _dali_avaliable
@@ -119,22 +119,6 @@ def main():
     # 1.7 will deprecate resume_from_checkpoint, but for the moment
     # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
     ckpt_path, wandb_run_id = None, None
-    if args.auto_resume and args.resume_from_checkpoint is None:
-        auto_resumer = AutoResumer(
-            checkpoint_dir=os.path.join(args.checkpoint_dir, "linear"),
-            max_hours=args.auto_resumer_max_hours,
-        )
-        resume_from_checkpoint, wandb_run_id = auto_resumer.find_checkpoint(args)
-        if resume_from_checkpoint is not None:
-            print(
-                "Resuming from previous checkpoint that matches specifications:",
-                f"'{resume_from_checkpoint}'",
-            )
-            ckpt_path = resume_from_checkpoint
-    elif args.resume_from_checkpoint is not None:
-        ckpt_path = args.resume_from_checkpoint
-        del args.resume_from_checkpoint
-
     callbacks = []
 
     if args.save_checkpoint:
@@ -194,6 +178,7 @@ def main():
         trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
     else:
         trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+
 
 
 if __name__ == "__main__":
