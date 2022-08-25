@@ -91,7 +91,6 @@ def parse_args_linear() -> argparse.Namespace:
 
     # incremental
     parser.add_argument("--num_tasks", type=int, default=5)
-    parser.add_argument("--method", type=str, default="linear")
     # parse args
     args = parser.parse_args()
     additional_setup_linear(args)
