@@ -131,6 +131,8 @@ if __name__ == '__main__':
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=874.ckpt'
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=437.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/s5fh5bvf/barlow_twins-imagenet32-s5fh5bvf-ep=999.ckpt'
 
     state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
