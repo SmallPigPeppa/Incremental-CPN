@@ -348,7 +348,7 @@ def prepare_data(
         train_dataset = split_dataset(
             train_dataset,
             tasks=tasks,
-            task_idx=list(range(task_idx + 1)),
+            task_idx=[task_idx],
         )
         val_dataset = split_dataset(
             val_dataset,
