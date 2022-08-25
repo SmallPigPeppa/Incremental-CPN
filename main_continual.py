@@ -172,9 +172,9 @@ def main():
             pass
 
         if args.data_format == "dali":
-            trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
+            trainer.fit(model, ckpt_path=None, datamodule=dali_datamodule)
         else:
-            trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+            trainer.fit(model, train_loader, val_loader, ckpt_path=None)
 
 
 if __name__ == "__main__":
