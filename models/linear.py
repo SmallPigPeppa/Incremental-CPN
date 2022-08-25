@@ -212,7 +212,7 @@ class LinearModel(pl.LightningModule):
                 if mask_task.sum()>0:
                     log[f"val_acc1_task{task_idx}"] = correct_task / mask_task.sum()
                 else:
-                    log[f"val_acc1_task{task_idx}"] = -1
+                    log[f"val_acc1_task{task_idx}"] = -1.0
 
         self.log_dict(log, sync_dist=True)
 
