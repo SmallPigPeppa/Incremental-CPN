@@ -121,7 +121,7 @@ if __name__ == '__main__':
     ckpt_dir = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug'
 
     # ckpt_dir='/share/wenzhuoliu/code/'
-    data_path = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds'
+    data_path = '/share/wenzhuoliu/torch_ds'
 
     # for filename in os.listdir(ckpt_dir):
     #     basename, ext = os.path.splitext(filename)
