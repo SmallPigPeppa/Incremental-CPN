@@ -1,4 +1,3 @@
-
 import pl_bolts
 from pl_bolts.models.self_supervised import SimCLR
 from pl_bolts.models.self_supervised.simclr import SimCLREvalDataTransform, SimCLRTrainDataTransform
@@ -33,15 +32,20 @@ class CPN(LightningModule):
         prototypes_list = [i for i in self.prototypes]
         d = torch.pow(x - torch.cat(prototypes_list), 2)
         d = torch.sum(d, dim=2)
-        logits = -1. * d
-        return logits
+        # logits = -1. * d
+        # return logits
+        return d
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        logits = self(x)
-        loss = F.nll_loss(logits, y)
+        d = self(x)
+        loss = F.nll_loss(-1.0 * d, y)
+
+        pl_loss = torch.index_select(d, dim=1, index=y)
+        pl_loss = torch.diagonal(pl_loss)
+        pl_loss = torch.mean(pl_loss)
         self.log("train_loss", loss)
-        return loss
+        return loss + 0.2 * pl_loss
 
     def evaluate(self, batch, stage=None):
         x, y = batch
