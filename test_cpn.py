@@ -49,7 +49,7 @@ class CPN(LightningModule):
 
     def evaluate(self, batch, stage=None):
         x, y = batch
-        logits = self(x)
+        logits = -1.0 * self(x)
         loss = F.nll_loss(logits, y)
         preds = torch.argmax(logits, dim=1)
         acc = accuracy(preds, y)
