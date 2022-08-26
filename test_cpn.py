@@ -39,7 +39,7 @@ class CPN(LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         d = self(x)
-        loss = F.nll_loss(-1.0 * d, y)
+        loss = F.cross_entropy(-1.0 * d, y)
 
         pl_loss = torch.index_select(d, dim=1, index=y)
         pl_loss = torch.diagonal(pl_loss)
@@ -50,7 +50,8 @@ class CPN(LightningModule):
     def evaluate(self, batch, stage=None):
         x, y = batch
         logits = -1.0 * self(x)
-        loss = F.nll_loss(logits, y)
+        # loss = F.nll_loss(logits, y)
+        loss = F.cross_entropy(logits, y)
         preds = torch.argmax(logits, dim=1)
         acc = accuracy(preds, y)
 
@@ -163,9 +164,7 @@ if __name__ == '__main__':
     #     if ext == '.ckpt':
     #         ckpt_path = os.path.join(ckpt_dir, filename)
     #         print(f'load ckpt from {ckpt_path}')
-    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=874.ckpt'
-    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=999.ckpt'
-    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/1ehqqmug/barlow_twins-imagenet32-1ehqqmug-ep=437.ckpt'
+
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt'
     # ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/s5fh5bvf/barlow_twins-imagenet32-s5fh5bvf-ep=999.ckpt'
 
