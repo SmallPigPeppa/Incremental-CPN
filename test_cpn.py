@@ -21,7 +21,7 @@ from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlate
 
 
 class CPN(LightningModule):
-    def __init__(self, features_dim=512, num_classes=100):
+    def __init__(self, features_dim=2048, num_classes=100):
         super().__init__()
         self.features_dim = features_dim
         self.num_calsses = num_classes
@@ -46,7 +46,6 @@ class CPN(LightningModule):
     def evaluate(self, batch, stage=None):
         x, y = batch
         logits = self(x)
-        print(logits.shape)
         loss = F.nll_loss(logits, y)
         preds = torch.argmax(logits, dim=1)
         acc = accuracy(preds, y)
