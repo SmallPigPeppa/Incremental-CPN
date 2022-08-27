@@ -24,9 +24,9 @@ do
       --batch_size 256 \
       --num_workers 10 \
       --crop_size 32 \
-      --name cifar-v3.0 \
+      --name cifar \
       --pretrained_feature_extractor ${pretrained_path} \
-      --project Incremental-CPN-swav \
+      --project Incremental-CPN-swav-v3.0 \
       --entity pigpeppa \
       --wandb \
       --mean 0.5071 0.4867 0.4408 \
