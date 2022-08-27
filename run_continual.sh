@@ -1,4 +1,4 @@
-for lambda in 1.0 0.9 0.8 0.7 0.6 0.5 0.4 0.3 0.2 0.1 0.05 0.025 0.01 0.005
+for lambda in 2.0 1.0 0.9 0.8 0.7 0.6 0.5 0.4 0.3 0.2 0.1 0.05 0.025 0.01 0.005
 do
   data_path=/share/wenzhuoliu/torch_ds
   #pretrained_dir=/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572
@@ -26,7 +26,7 @@ do
       --crop_size 32 \
       --name cifar \
       --pretrained_feature_extractor ${pretrained_path} \
-      --project Incremental-CPN-swav-v4.0 \
+      --project Incremental-CPN-swav-v5.0 \
       --entity pigpeppa \
       --wandb \
       --mean 0.5071 0.4867 0.4408 \

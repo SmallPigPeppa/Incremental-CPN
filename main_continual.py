@@ -40,8 +40,9 @@ def main():
     args = parse_args_linear()
 
     # split classes into tasks
-    tasks_initial = torch.tensor(list(range(int(args.num_classes / 2)))).chunk(1)
-    tasks_incremental = torch.tensor(list(range(int(args.num_classes / 2), args.num_classes))).chunk(
+    classes_order=torch.randperm(args.num_classes)
+    tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
+    tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(
         args.num_tasks - 1)
     tasks = tasks_initial + tasks_incremental
 
