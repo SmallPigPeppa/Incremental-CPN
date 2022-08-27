@@ -98,6 +98,7 @@ def main():
             num_workers=args.num_workers,
             tasks=None
         )
+        print(train_loader)
         cpn_means = get_means(encoder=encoder, train_loader=train_loader, classes=list(range(100)))
 
     make_contiguous(model)
