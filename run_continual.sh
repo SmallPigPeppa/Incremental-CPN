@@ -13,7 +13,7 @@ do
       --train_data_path ${data_path} \
       --val_data_path ${data_path} \
       --max_epochs 100 \
-      --devices 0 \
+      --devices 1 \
       --accelerator gpu \
       --precision 16 \
       --optimizer sgd \
@@ -24,7 +24,7 @@ do
       --batch_size 256 \
       --num_workers 10 \
       --crop_size 32 \
-      --name cpn-cifar \
+      --name cifar-v3.0 \
       --pretrained_feature_extractor ${pretrained_path} \
       --project Incremental-CPN-swav \
       --entity pigpeppa \
