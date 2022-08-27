@@ -84,17 +84,33 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
     """
     # transforms.RandomResizedCrop(size=32, scale=(0.08, 1.0)),
     # transforms.RandomHorizontalFlip(),
+    # cifar_pipeline = {
+    #     "T_train": transforms.Compose(
+    #         [
+    #             transforms.ToTensor(),
+    #             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+    #         ]
+    #     ),
+    #     "T_val": transforms.Compose(
+    #         [
+    #             transforms.ToTensor(),
+    #             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+    #         ]
+    #     ),
+    # }
+    # mean = [0.5071, 0.4867, 0.4408]
+    # std = [0.2675, 0.2565, 0.2761]
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+                transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
             ]
         ),
         "T_val": transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)),
+                transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
             ]
         ),
     }
