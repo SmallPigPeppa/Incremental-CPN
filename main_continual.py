@@ -109,6 +109,8 @@ def main():
             # change current_tasks
             current_tasks = tasks[task_idx]
             model.classifier.incremental_initial(means=cpn_means, current_tasks=current_tasks)
+            if task_idx > 0:
+                args.pl_lambda = 0.0
             # model.classifier.incremental_initial(current_tasks=current_tasks)
 
         if args.data_format == "dali":
