@@ -23,13 +23,13 @@ class PrototypeClassifier(nn.Module):
         self.prototypes = nn.ParameterList(
             [nn.Parameter(torch.randn(1, self.features_dim)) for i in range(self.num_calsses)])
 
-    def forward(self, x):
-        x = x.reshape(-1, 1, self.features_dim)
-        prototypes_list = [i for i in self.prototypes]
-        d = torch.pow(x - torch.cat(prototypes_list), 2)
-        d = torch.sum(d, dim=2)
-        logits = -1. * d
-        return logits
+    # def forward(self, x):
+    #     x = x.reshape(-1, 1, self.features_dim)
+    #     prototypes_list = [i for i in self.prototypes]
+    #     d = torch.pow(x - torch.cat(prototypes_list), 2)
+    #     d = torch.sum(d, dim=2)
+    #     logits = -1. * d
+    #     return logits
 
     def forward(self, x):
         x = x.reshape(-1, 1, self.features_dim)
