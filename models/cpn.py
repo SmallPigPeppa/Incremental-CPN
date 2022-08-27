@@ -48,8 +48,8 @@ class PrototypeClassifier(nn.Module):
             for i in current_tasks:
                 # nn.init.constant_(self.prototypes[i].data, means[i])
                 print(self.prototypes[i].data.shape)
-                print((means[i]).reshape(-1).shape)
-                self.prototypes[i].data = torch.nn.Parameter((means[i]).reshape(-1))
+                print((means[i]).reshape(1,-1))
+                self.prototypes[i].data = torch.nn.Parameter((means[i]).reshape(1,-1))
         no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
         for i in no_grad_idx:
             self.prototypes[i].requires_grad = False
