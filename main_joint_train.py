@@ -32,6 +32,7 @@ else:
     _dali_avaliable = True
 from args.setup import parse_args_linear
 
+
 def main():
     seed_everything(5)
 
@@ -79,8 +80,8 @@ def main():
     if args.method == 'linear':
         model = LinearModel(encoder=encoder, tasks=tasks, **args.__dict__)
     elif args.method == 'cpn':
-        current_tasks=list(range(100))
-        model = CPNModule(encoder=encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda,tasks=tasks, **args.__dict__)
+        current_tasks = list(range(100))
+        model = CPNModule(encoder=encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda, tasks=tasks,**args.__dict__)
 
     make_contiguous(model)
 
@@ -96,7 +97,6 @@ def main():
         batch_size=args.batch_size,
         num_workers=args.num_workers,
     )
-
 
     if args.data_format == "dali":
         assert (
@@ -178,8 +178,6 @@ def main():
         trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
     else:
         trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
-
-
 
 
 if __name__ == "__main__":

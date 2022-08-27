@@ -2,8 +2,8 @@ data_path=/mnt/mmtech01/usr/liuwenzhuo/torch_ds
 pretrained_dir=/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/simclr/2mv95572
 pretrained_path="$(ls $pretrained_dir/*.ckpt)"
 echo "pretrained_path: $pretrained_path"
-pl_lambda=0.2
-/share/wenzhuoliu/conda-envs/solo-learn/bin/python joint_train.py \
+pl_lambda=0.03
+/share/wenzhuoliu/conda-envs/solo-learn/bin/python main_joint_train.py \
     --dataset cifar100 \
     --encoder resnet50 \
     --method cpn \

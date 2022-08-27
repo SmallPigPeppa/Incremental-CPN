@@ -17,7 +17,30 @@ from torchvision.models import resnet18, resnet50
 import warnings
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
+import argparse
 
+def parse_args_linear() -> argparse.Namespace:
+    """Parses feature extractor, dataset, pytorch lightning, linear eval specific and additional args.
+
+    First adds an arg for the pretrained feature extractor, then adds dataset, pytorch lightning
+    and linear eval specific args. If wandb is enabled, it adds checkpointer args. Finally, adds
+    additional non-user given parameters.
+
+    Returns:
+        argparse.Namespace: a namespace containing all args needed for pretraining.
+    """
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--pretrained_feature_extractor", type=str, required=True)
+    parser.add_argument("--pretrain_method", type=str, default=None)
+
+    # incremental
+    parser.add_argument("--num_tasks", type=int, default=5)
+    # parse args
+    args = parser.parse_args()
+
+    return args
 
 class CPN(LightningModule):
     def __init__(self, features_dim=2048, num_classes=100):
