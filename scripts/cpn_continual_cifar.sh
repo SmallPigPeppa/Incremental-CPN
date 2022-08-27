@@ -29,4 +29,4 @@ echo "pretrained_path: $pretrained_path"
     --wandb \
     --mean 0.5071 0.4867 0.4408 \
     --std 0.2675 0.2565 0.2761 \
-    --pl_lambda $pl_lambda \
+    --pl_lambda $pl_lambda
