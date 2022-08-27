@@ -31,14 +31,27 @@ class PrototypeClassifier(nn.Module):
         logits = -1. * d
         return logits
 
+    def forward(self, x):
+        x = x.reshape(-1, 1, self.features_dim)
+        for i in self.no_grad_idx:
+            self.prototypes[i].detach()
+        prototypes_list = [i for i in self.prototypes]
+        d = torch.pow(x - torch.cat(prototypes_list), 2)
+        d = torch.sum(d, dim=2)
+        logits = -1. * d
+        return logits
+
+
+
     def incremental_initial(self, means=None, current_tasks=list(range(10))):
         if means is not None:
             for i in current_tasks:
                 # nn.init.constant_(self.prototypes[i].data, means[i])
-                self.prototypes[i].data = torch.nn.Parameter(means[i])
+                self.prototypes[i].data = torch.nn.Parameter((means[i]).reshape(-1))
         no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
-        for i in no_grad_idx:
-            self.prototypes[i].requires_grad = False
+        self.no_grad_idx = no_grad_idx
+        # for i in no_grad_idx:
+        #     self.prototypes[i].requires_grad = False
 
 
 class CPNModule(LinearModel):
