@@ -260,7 +260,7 @@ if __name__ == '__main__':
     y_test = np.hstack(y_test)
 
     x_train = 10.0 * x_train
-    y_train = 10.0 * y_train
+    x_test = 10.0 * x_test
 
     print(x_train.shape, y_train.shape)
     print(x_test.shape, y_test.shape)
