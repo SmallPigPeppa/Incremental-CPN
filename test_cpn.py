@@ -45,7 +45,7 @@ class CPN(LightningModule):
         pl_loss = torch.diagonal(pl_loss)
         pl_loss = torch.mean(pl_loss)
         self.log("train_loss", loss)
-        return loss + 0.2 * pl_loss
+        return loss + 0.03 * pl_loss
 
     def evaluate(self, batch, stage=None):
         x, y = batch
