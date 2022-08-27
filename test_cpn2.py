@@ -56,7 +56,7 @@ class CPN(LightningModule):
         x = x.reshape(-1, 1, self.features_dim)
         prototypes_list = [i for i in self.prototypes]
         d = torch.pow(x - torch.cat(prototypes_list), 2)
-        d = 10.0 * torch.sum(d, dim=2)
+        d = torch.sum(d, dim=2)
         # logits = -1. * d
         # return logits
         return d
@@ -258,6 +258,9 @@ if __name__ == '__main__':
     x_test = np.vstack(x_test)
     y_train = np.hstack(y_train)
     y_test = np.hstack(y_test)
+
+    x_train = 10.0 * x_train
+    y_train = 10.0 * y_train
 
     print(x_train.shape, y_train.shape)
     print(x_test.shape, y_test.shape)
