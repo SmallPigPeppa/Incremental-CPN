@@ -11,7 +11,7 @@ pl_lambda=0.03
     --encoder resnet50 \
     --train_data_path ${data_path} \
     --val_data_path ${data_path} \
-    --max_epochs 100 \
+    --max_epochs 1 \
     --devices 0 \
     --accelerator gpu \
     --precision 16 \
