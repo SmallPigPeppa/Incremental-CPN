@@ -100,7 +100,6 @@ def main():
         )
         cpn_means = get_means(encoder=encoder, train_loader=train_loader, classes=list(range(100)))
 
-
     make_contiguous(model)
 
     for task_idx in range(args.num_tasks):
@@ -111,7 +110,7 @@ def main():
             current_tasks = tasks[task_idx]
             print(cpn_means[1].shape)
             # model.classifier.incremental_initial(means=cpn_means[current_tasks], current_tasks=current_tasks)
-            model.classifier.incremental_initial( current_tasks=current_tasks)
+            model.classifier.incremental_initial(current_tasks=current_tasks)
 
         if args.data_format == "dali":
             val_data_format = "image_folder"
@@ -196,6 +195,7 @@ def main():
             trainer.fit(model, train_loader, val_loader, ckpt_path=None)
 
         wandb.finish()
+
 
 if __name__ == "__main__":
     main()
