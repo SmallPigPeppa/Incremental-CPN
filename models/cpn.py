@@ -73,10 +73,10 @@ class CPNModule(LinearModel):
         out.update({"loss": out["loss"] + self.pl_lambda * pl_loss})
         return out
 
-    def on_train_start(self):
-        """Resets the step counter at the beginning of training."""
-        super().on_train_start()
-        self.classifier.incremental_initial(current_tasks=self.current_tasks)
+    # def on_train_start(self):
+    #     """Resets the step counter at the beginning of training."""
+    #     super().on_train_start()
+    #     self.classifier.incremental_initial(current_tasks=self.current_tasks)
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(

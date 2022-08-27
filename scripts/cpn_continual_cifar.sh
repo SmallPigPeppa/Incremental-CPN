@@ -2,6 +2,7 @@ data_path=/share/wenzhuoliu/torch_ds
 pretrained_dir=/share/wenzhuoliu/code/solo-learn/trained_models/simclr/2mv95572
 pretrained_path="$(ls $pretrained_dir/*.ckpt)"
 echo "pretrained_path: $pretrained_path"
+pl_lambda=0.03
 /share/wenzhuoliu/conda-envs/solo-learn/bin/python main_continual.py \
     --num_tasks 6\
     --meathod cpn \
@@ -27,4 +28,5 @@ echo "pretrained_path: $pretrained_path"
     --entity pigpeppa \
     --wandb \
     --mean 0.5071 0.4867 0.4408 \
-    --std 0.2675 0.2565 0.2761
+    --std 0.2675 0.2565 0.2761 \
+    --pl_lambda $pl_lambda \

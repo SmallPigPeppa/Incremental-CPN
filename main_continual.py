@@ -85,13 +85,31 @@ def main():
         model = LinearModel(encoder=encoder, tasks=tasks, **args.__dict__)
     elif args.method == 'cpn':
         current_tasks = list(range(100))
+        # current_tasks = tasks[task_idx]
         model = CPNModule(encoder=encoder, current_tasks=current_tasks, pl_lamda=args.pl_lambda, tasks=tasks,
                           **args.__dict__)
+        from utils.get_cpn_means import get_means
+        train_loader, val_loader = prepare_data(
+            args.dataset,
+            train_data_path=args.train_data_path,
+            val_data_path=args.val_data_path,
+            data_format=args.data_format,
+            batch_size=args.batch_size,
+            num_workers=args.num_workers,
+            tasks=None
+        )
+        cpn_means = get_means(encoder=encoder, train_loader=train_loader, classes=list(range(100)))
 
     make_contiguous(model)
 
     for task_idx in range(args.num_tasks):
         print(f"################## start task {task_idx} ##################")
+
+        if args.method == 'cpn':
+            # change current_tasks
+            current_tasks = tasks[task_idx]
+            model.classifier.incremental_initial(means=cpn_means[current_tasks], current_tasks=current_tasks)
+
         if args.data_format == "dali":
             val_data_format = "image_folder"
         else:
@@ -125,56 +143,56 @@ def main():
             # use normal torchvision dataloader for validation to save memory
             dali_datamodule.val_dataloader = lambda: val_loader
 
-        # 1.7 will deprecate resume_from_checkpoint, but for the moment
-        # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
-        callbacks = []
-        # wandb logging
-        if args.wandb:
-            wandb_logger = WandbLogger(
-                name=f"{args.name}-task{task_idx}",
-                project=args.project,
-                entity=args.entity,
-                offline=args.offline,
+            # 1.7 will deprecate resume_from_checkpoint, but for the moment
+            # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
+            callbacks = []
+            # wandb logging
+            if args.wandb:
+                wandb_logger = WandbLogger(
+                    name=f"{args.name}-task{task_idx}",
+                    project=args.project,
+                    entity=args.entity,
+                    offline=args.offline,
+                )
+                # wandb_logger.log_hyperparams(args)
+
+                # lr logging
+                lr_monitor = LearningRateMonitor(logging_interval="step")
+                callbacks.append(lr_monitor)
+
+            trainer = Trainer.from_argparse_args(
+                args,
+                logger=wandb_logger if args.wandb else None,
+                callbacks=callbacks,
+                enable_checkpointing=False,
+                strategy=DDPStrategy(find_unused_parameters=False)
+                if args.strategy == "ddp"
+                else args.strategy,
             )
-            # wandb_logger.log_hyperparams(args)
 
-            # lr logging
-            lr_monitor = LearningRateMonitor(logging_interval="step")
-            callbacks.append(lr_monitor)
+            # fix for incompatibility with nvidia-dali and pytorch lightning
+            # with dali 1.15 (this will be fixed on 1.16)
+            # https://github.com/Lightning-AI/lightning/issues/12956
+            try:
+                from pytorch_lightning.loops import FitLoop
 
-        trainer = Trainer.from_argparse_args(
-            args,
-            logger=wandb_logger if args.wandb else None,
-            callbacks=callbacks,
-            enable_checkpointing=False,
-            strategy=DDPStrategy(find_unused_parameters=False)
-            if args.strategy == "ddp"
-            else args.strategy,
-        )
+                class WorkaroundFitLoop(FitLoop):
+                    @property
+                    def prefetch_batches(self) -> int:
+                        return 1
 
-        # fix for incompatibility with nvidia-dali and pytorch lightning
-        # with dali 1.15 (this will be fixed on 1.16)
-        # https://github.com/Lightning-AI/lightning/issues/12956
-        try:
-            from pytorch_lightning.loops import FitLoop
+                trainer.fit_loop = WorkaroundFitLoop(
+                    trainer.fit_loop.min_epochs, trainer.fit_loop.max_epochs
+                )
+            except:
+                pass
 
-            class WorkaroundFitLoop(FitLoop):
-                @property
-                def prefetch_batches(self) -> int:
-                    return 1
+            if args.data_format == "dali":
+                trainer.fit(model, ckpt_path=None, datamodule=dali_datamodule)
+            else:
+                trainer.fit(model, train_loader, val_loader, ckpt_path=None)
 
-            trainer.fit_loop = WorkaroundFitLoop(
-                trainer.fit_loop.min_epochs, trainer.fit_loop.max_epochs
-            )
-        except:
-            pass
+            wandb.finish()
 
-        if args.data_format == "dali":
-            trainer.fit(model, ckpt_path=None, datamodule=dali_datamodule)
-        else:
-            trainer.fit(model, train_loader, val_loader, ckpt_path=None)
-
-        wandb.finish()
-
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        main()
