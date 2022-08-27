@@ -13,7 +13,7 @@ do
       --train_data_path ${data_path} \
       --val_data_path ${data_path} \
       --max_epochs 100 \
-      --devices 2 \
+      --devices 3 \
       --accelerator gpu \
       --precision 16 \
       --optimizer sgd \
