@@ -41,7 +41,7 @@ class PrototypeClassifier(nn.Module):
 
 
 class CPNModule(LinearModel):
-    def __init__(self,current_tasks, pl_lambda, **kwargs):
+    def __init__(self, current_tasks, pl_lambda, **kwargs):
         super().__init__(**kwargs)
         self.current_tasks = current_tasks
         self.classifier = PrototypeClassifier(self.features_dim, self.num_classes)
@@ -77,6 +77,54 @@ class CPNModule(LinearModel):
         """Resets the step counter at the beginning of training."""
         super().on_train_start()
         self.classifier.incremental_initial(current_tasks=self.current_tasks)
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.SGD(
+            self.parameters(),
+            lr=0.4,
+            momentum=0.9,
+            weight_decay=0.,
+        )
+        self.scheduler = "step"
+        self.lr_decay_steps = [30, 60]
+        # select scheduler
+        if self.scheduler == "none":
+            return optimizer
+
+        if self.scheduler == "warmup_cosine":
+            max_warmup_steps = (
+                self.warmup_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.warmup_epochs
+            )
+            max_scheduler_steps = (
+                self.max_epochs * self.num_training_steps
+                if self.scheduler_interval == "step"
+                else self.max_epochs
+            )
+            scheduler = {
+                "scheduler": LinearWarmupCosineAnnealingLR(
+                    optimizer,
+                    warmup_epochs=max_warmup_steps,
+                    max_epochs=max_scheduler_steps,
+                    warmup_start_lr=self.warmup_start_lr if self.warmup_epochs > 0 else self.lr,
+                    eta_min=self.min_lr,
+                ),
+                "interval": self.scheduler_interval,
+                "frequency": 1,
+            }
+        elif self.scheduler == "reduce":
+            scheduler = ReduceLROnPlateau(optimizer)
+        elif self.scheduler == "step":
+            scheduler = MultiStepLR(optimizer, self.lr_decay_steps, gamma=0.1)
+        elif self.scheduler == "exponential":
+            scheduler = ExponentialLR(optimizer, self.weight_decay)
+        else:
+            raise ValueError(
+                f"{self.scheduler} not in (warmup_cosine, cosine, reduce, step, exponential)"
+            )
+
+        return [optimizer], [scheduler]
 
     @staticmethod
     def add_model_specific_args(parent_parser: ArgumentParser) -> ArgumentParser:

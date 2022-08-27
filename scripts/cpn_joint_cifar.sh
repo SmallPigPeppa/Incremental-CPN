@@ -22,7 +22,7 @@ pl_lambda=0.03
     --batch_size 256 \
     --num_workers 10 \
     --crop_size 32 \
-    --name joint-train-cifar-cpn-lamda:$pl_lambda \
+    --name joint-cifar-cpn-lamda:$pl_lambda \
     --pretrained_feature_extractor ${pretrained_path} \
     --project Incremental-CPN \
     --entity pigpeppa \
