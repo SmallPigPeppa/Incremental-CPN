@@ -1,4 +1,4 @@
-for lambda in 0.2 0.1 0.05 0.025 0.01 0.005 0.0025 0.001
+for lambda in 0.2 0.1 0.05 0.025 0.01 0.005 0.0025 0.001 0.0005 0.00025
 do
     data_path=/share/wenzhuoliu/torch_ds
     pretrained_dir=/share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o
