@@ -6,7 +6,7 @@ echo "pretrained_path: $pretrained_path"
 pl_lambda=0.03
 /share/wenzhuoliu/conda-envs/solo-learn/bin/python main_continual.py \
     --num_tasks 6\
-    --meathod cpn \
+    --method cpn \
     --dataset cifar100 \
     --encoder resnet50 \
     --train_data_path ${data_path} \
