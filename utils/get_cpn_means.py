@@ -1,7 +1,7 @@
 import numpy as np
 import torch.nn as nn
 import torch
-import tqdm
+from tqdm import tqdm
 
 
 def get_means(encoder, train_loader, classes):
