@@ -149,12 +149,21 @@ def main():
         callbacks = []
         # wandb logging
         if args.wandb:
-            wandb_logger = WandbLogger(
-                name=f"{args.name}-task{task_idx}",
-                project=args.project,
-                entity=args.entity,
-                offline=args.offline,
-            )
+            if args.method == 'cpn':
+                wandb_logger = WandbLogger(
+                    name=f"{args.name}-task{task_idx}-lamda:{args.pl_lambda}",
+                    project=args.project,
+                    entity=args.entity,
+                    offline=args.offline,
+                )
+            else:
+                wandb_logger = WandbLogger(
+                    name=f"{args.name}-task{task_idx}",
+                    project=args.project,
+                    entity=args.entity,
+                    offline=args.offline,
+                )
+
             # wandb_logger.log_hyperparams(args)
 
             # lr logging

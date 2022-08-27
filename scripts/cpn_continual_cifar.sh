@@ -25,7 +25,7 @@ pl_lambda=0.03
     --crop_size 32 \
     --name cpn-cifar \
     --pretrained_feature_extractor ${pretrained_path} \
-    --project Incremental-CPN \
+    --project Incremental-CPN-swav \
     --entity pigpeppa \
     --wandb \
     --mean 0.5071 0.4867 0.4408 \
