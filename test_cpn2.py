@@ -264,6 +264,7 @@ if __name__ == '__main__':
 
     print(x_train.shape, y_train.shape)
     print(x_test.shape, y_test.shape)
+
     # ds pretrained
     train_dataset = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
     test_dataset = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
