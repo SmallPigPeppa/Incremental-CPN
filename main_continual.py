@@ -98,8 +98,8 @@ def main():
             num_workers=args.num_workers,
             tasks=None
         )
-        print(train_loader)
         cpn_means = get_means(encoder=encoder, train_loader=train_loader, classes=list(range(100)))
+
 
     make_contiguous(model)
 
@@ -109,6 +109,7 @@ def main():
         if args.method == 'cpn':
             # change current_tasks
             current_tasks = tasks[task_idx]
+            print(cpn_means[current_tasks].shape)
             model.classifier.incremental_initial(means=cpn_means[current_tasks], current_tasks=current_tasks)
 
         if args.data_format == "dali":
