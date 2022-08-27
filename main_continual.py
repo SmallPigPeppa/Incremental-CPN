@@ -108,7 +108,6 @@ def main():
         if args.method == 'cpn':
             # change current_tasks
             current_tasks = tasks[task_idx]
-            print(cpn_means[1].shape)
             model.classifier.incremental_initial(means=cpn_means[current_tasks], current_tasks=current_tasks)
             # model.classifier.incremental_initial(current_tasks=current_tasks)
 
