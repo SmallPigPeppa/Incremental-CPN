@@ -40,7 +40,7 @@ def main():
     args = parse_args_linear()
 
     # split classes into tasks
-    classes_order=torch.randperm(args.num_classes)
+    classes_order = torch.randperm(args.num_classes)
     tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
     tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(
         args.num_tasks - 1)
@@ -105,6 +105,8 @@ def main():
 
     for task_idx in range(args.num_tasks):
         print(f"################## start task {task_idx} ##################")
+        if task_idx == 0:
+            args.max_epochs = 1000
 
         if args.method == 'cpn':
             # change current_tasks
