@@ -107,6 +107,8 @@ def main():
         print(f"################## start task {task_idx} ##################")
         if task_idx == 0:
             args.max_epochs = 1000
+        else:
+            args.max_epochs = 100
 
         if args.method == 'cpn':
             # change current_tasks
