@@ -13,7 +13,7 @@ do
       --train_data_path ${data_path} \
       --val_data_path ${data_path} \
       --max_epochs 100 \
-      --devices 3 \
+      --devices 0 \
       --accelerator gpu \
       --precision 16 \
       --optimizer sgd \
@@ -26,7 +26,7 @@ do
       --crop_size 32 \
       --name cifar \
       --pretrained_feature_extractor ${pretrained_path} \
-      --project Incremental-CPN-swav-v5.0 \
+      --project Incremental-CPN-swav-v6.0 \
       --entity pigpeppa \
       --wandb \
       --mean 0.5071 0.4867 0.4408 \
