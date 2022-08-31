@@ -267,7 +267,7 @@ if __name__ == '__main__':
 
 
 
-    mmodel = IncrementalPT(cn=50, dim_feature=2048, means=torch.rand([50,1024]))
+    mmodel = IncrementalPT(cn=50, dim_feature=2048, means=torch.rand([50,2048]))
     trainer = pl.Trainer(
         gpus=NUM_GPUS,
         max_epochs=EPOCHS,
@@ -298,7 +298,7 @@ if __name__ == '__main__':
         EPOCHS = 300
         LAMBDA1 = 0.
         LAMBDA2 = 0.
-        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx],1024)]))
+        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx],2048)]))
         train_dataset = split_dataset(
             train_dataset,
             tasks=tasks,
