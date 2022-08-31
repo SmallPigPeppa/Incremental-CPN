@@ -166,9 +166,9 @@ class IncrementalPT(pl.LightningModule):
         pl_cosloss = -1. * torch.sum(cos_matrix)
         # all loss
         loss = ce_loss + pl_loss * LAMBDA1 + pl_cosloss * LAMBDA2
-        self.log("c", ce_loss,on_epoch=True, sync_dist=True)
-        self.log("p1", pl_loss,on_epoch=True, sync_dist=True)
-        self.log("p2", pl_cosloss,on_epoch=True, sync_dist=True)
+        self.log("c", ce_loss, on_epoch=True, sync_dist=True)
+        self.log("p1", pl_loss, on_epoch=True, sync_dist=True)
+        self.log("p2", pl_cosloss, on_epoch=True, sync_dist=True)
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
@@ -201,10 +201,10 @@ class IncrementalPT(pl.LightningModule):
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
         if stage:
-            self.log('cv', ce_loss,on_epoch=True, sync_dist=True)
-            self.log('p1v', pl_loss,on_epoch=True, sync_dist=True)
-            self.log('p2v', pl_cosloss,on_epoch=True, sync_dist=True)
-            self.log('vacc', acc,on_epoch=True, sync_dist=True)
+            self.log('cv', ce_loss, on_epoch=True, sync_dist=True)
+            self.log('p1v', pl_loss, on_epoch=True, sync_dist=True)
+            self.log('p2v', pl_cosloss, on_epoch=True, sync_dist=True)
+            self.log('vacc', acc, on_epoch=True, sync_dist=True)
 
     def validation_step(self, batch, batch_idx):
         self.evaluate(batch, 'val')
