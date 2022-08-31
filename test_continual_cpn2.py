@@ -291,7 +291,7 @@ if __name__ == '__main__':
         tasks=tasks,
         task_idx=list(range(0 + 1)),
     )
-    train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder,train_dataset=train_dataset0,test_dataset=test_dataset0)
+    train_dataset0, test_dataset0 = get_pretrained_dataset(encoder=encoder,train_dataset=train_dataset0,test_dataset=test_dataset0)
     train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
