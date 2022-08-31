@@ -189,6 +189,7 @@ class IncrementalPT(pl.LightningModule):
         x, targets = batch
         d = self(x)
         logits=-1.*d
+        print(x.shape)
         print(logits.shape)
         print(targets.shape)
         # ce loss
@@ -229,7 +230,7 @@ if __name__ == '__main__':
     LAMBDA2 = 0.
     LR = 0.3
     BATCH_SIZE = 1024
-    NUM_GPUS = [0]
+    NUM_GPUS = [0,1]
     NUM_WORKERS = 1
     INCREMENTAL_N=10
     IMGSIZE=32
