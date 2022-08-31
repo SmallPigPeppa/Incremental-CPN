@@ -189,6 +189,8 @@ class IncrementalPT(pl.LightningModule):
         x, targets = batch
         d = self(x)
         logits=-1.*d
+        print(logits.shape)
+        print(targets.shape)
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
         # pl loss
