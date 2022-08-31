@@ -26,6 +26,7 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
 def get_pretrained_encoder():
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt'
     # ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/s5fh5bvf/barlow_twins-imagenet32-s5fh5bvf-ep=999.ckpt'
+    ckpt_path='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt'
     state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
         if "encoder" in k:
