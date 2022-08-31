@@ -230,7 +230,7 @@ if __name__ == '__main__':
     LAMBDA2 = 0.
     LR = 0.3
     BATCH_SIZE = 1024
-    NUM_GPUS = [0,1]
+    NUM_GPUS = [2,3]
     NUM_WORKERS = 1
     INCREMENTAL_N=10
     IMGSIZE=32
@@ -301,7 +301,7 @@ if __name__ == '__main__':
         EPOCHS = 300
         LAMBDA1 = 0.
         LAMBDA2 = 0.
-        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx],2048)]))
+        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx]),2048]))
         train_dataset = split_dataset(
             train_dataset,
             tasks=tasks,
