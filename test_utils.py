@@ -15,7 +15,6 @@ import torch.nn.functional as F
 
 
 def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
-    assert len(dataset.classes) == sum([len(t) for t in tasks])
     current_task = torch.cat(tuple(tasks[i] for i in task_idx))
     mask = [(c in current_task) for c in dataset.targets]
     indexes = torch.tensor(mask).nonzero()
