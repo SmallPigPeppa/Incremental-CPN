@@ -81,10 +81,10 @@ def get_pretrained_dataset(encoder,train_dataset,test_dataset):
     print(x_train.shape, y_train.shape)
     print(x_test.shape, y_test.shape)
     # ds pretrained
-    train_dataset = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
-    test_dataset = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
+    train_dataset_pretrained = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
+    test_dataset_pretrained = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
 
-    return train_dataset, test_dataset
+    return train_dataset_pretrained, test_dataset_pretrained
 
 class IncrementalPT(pl.LightningModule):
     def __init__(self, cn, dim_feature, means):
