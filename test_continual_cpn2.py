@@ -258,18 +258,18 @@ if __name__ == '__main__':
         checkpoint_callback=False,
         precision=16,
     )
-    train_dataset = split_dataset(
+    train_dataset0 = split_dataset(
         train_dataset,
         tasks=tasks,
         task_idx=[0],
     )
-    test_dataset = split_dataset(
+    test_dataset0 = split_dataset(
         test_dataset,
         tasks=tasks,
         task_idx=list(range(0 + 1)),
     )
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+    train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
 
 
