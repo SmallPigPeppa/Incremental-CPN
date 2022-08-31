@@ -15,6 +15,7 @@ import torch.nn.functional as F
 
 
 def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
+    assert len(dataset.classes) == sum([len(t) for t in tasks])
     current_task = torch.cat(tuple(tasks[i] for i in task_idx))
     mask = [(c in current_task) for c in dataset.targets]
     indexes = torch.tensor(mask).nonzero()
@@ -45,27 +46,12 @@ def get_pretrained_encoder():
     return encoder
 
 
-def get_pretrained_dataset(encoder):
+def get_pretrained_dataset(encoder,train_dataset,test_dataset):
     IMGSIZE = 32
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
     encoder.eval()
     encoder.to(device)
-    data_path = '/share/wenzhuoliu/torch_ds'
 
-    # cifar100
-    mean = [0.5071, 0.4867, 0.4408]
-    std = [0.2675, 0.2565, 0.2761]
-    # # imagenet
-    # mean = [0.485, 0.456, 0.406]
-    # std = [0.229, 0.224, 0.225]
-    cifar_transforms = transforms.Compose(
-        [transforms.Resize(IMGSIZE), transforms.ToTensor(), transforms.Normalize(mean, std)])
-    train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
-                                                  transform=cifar_transforms,
-                                                  download=True)
-    test_dataset = torchvision.datasets.CIFAR100(root=data_path, train=False,
-                                                 transform=cifar_transforms,
-                                                 download=True)
 
     train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=8,
                               pin_memory=True)

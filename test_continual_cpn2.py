@@ -15,6 +15,7 @@ from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlate
 from test_utils import get_pretrained_dataset, get_pretrained_encoder, split_dataset
 import argparse
 import pytorch_lightning as pl
+from torchvision import transforms
 
 
 def parse_args_linear() -> argparse.Namespace:
@@ -229,9 +230,28 @@ if __name__ == '__main__':
     NUM_GPUS = [0,1]
     NUM_WORKERS = 1
     INCREMENTAL_N=10
+    IMGSIZE=32
     seed_everything(5)
     encoder = get_pretrained_encoder()
-    train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder)
+    data_path = '/share/wenzhuoliu/torch_ds'
+
+    # cifar100
+    mean = [0.5071, 0.4867, 0.4408]
+    std = [0.2675, 0.2565, 0.2761]
+    # # imagenet
+    # mean = [0.485, 0.456, 0.406]
+    # std = [0.229, 0.224, 0.225]
+    cifar_transforms = transforms.Compose(
+        [transforms.Resize(IMGSIZE), transforms.ToTensor(), transforms.Normalize(mean, std)])
+    train_dataset = torchvision.datasets.CIFAR100(root=data_path, train=True,
+                                                  transform=cifar_transforms,
+                                                  download=True)
+    test_dataset = torchvision.datasets.CIFAR100(root=data_path, train=False,
+                                                 transform=cifar_transforms,
+                                                 download=True)
+
+
+
 
     # split classes into tasks
     classes_order = torch.tensor(list(range(num_classes)))
@@ -268,6 +288,7 @@ if __name__ == '__main__':
         tasks=tasks,
         task_idx=list(range(0 + 1)),
     )
+    train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder,train_dataset=train_dataset0,test_dataset=test_dataset0)
     train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
@@ -288,8 +309,10 @@ if __name__ == '__main__':
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
-        train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-        test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+        train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset,
+                                                             test_dataset=test_dataset)
+        train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
+        test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
 
         trainer = pl.Trainer(
             gpus=NUM_GPUS,
