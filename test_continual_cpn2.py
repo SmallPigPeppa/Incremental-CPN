@@ -297,7 +297,7 @@ if __name__ == '__main__':
             accumulate_grad_batches=1,
             sync_batchnorm=True,
             accelerator='ddp',
-            logger=TensorBoardLogger(f"./logs/", name=f"cifar_{int(50 / INCREMENTAL_N)}steps_{i + 1}"),
+            logger=TensorBoardLogger(f"./logs/", name=f"cifar_{int(50 / INCREMENTAL_N)}steps_{num_tasks+1}"),
             checkpoint_callback=False,
             precision=16,
 
