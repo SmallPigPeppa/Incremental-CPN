@@ -226,7 +226,7 @@ if __name__ == '__main__':
     LAMBDA2 = 0.
     LR = 0.3
     BATCH_SIZE = 1024
-    NUM_GPUS = [2, 3]
+    NUM_GPUS = [0,1]
     NUM_WORKERS = 1
     INCREMENTAL_N = 10
     IMGSIZE = 32
