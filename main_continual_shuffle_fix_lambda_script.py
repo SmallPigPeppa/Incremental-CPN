@@ -11,16 +11,15 @@ from models.icpn import IncrementalCPN
 
 def main():
     args = parse_args_cpn()
-    num_classes = 100
     num_gpus = [0, 1]
 
     encoder = get_pretrained_encoder(args.pretrained_model)
     model = IncrementalCPN(**args.__dict__)
 
-    classes_order = torch.tensor(list(range(num_classes)))
+    classes_order = torch.tensor(list(range(args.num_classes)))
     # classes_order = torch.randperm(num_classes)
-    tasks_initial = classes_order[:int(num_classes / 2)].chunk(1)
-    tasks_incremental = classes_order[int(num_classes / 2):num_classes].chunk(args.num_tasks)
+    tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
+    tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(args.num_tasks)
     tasks = tasks_initial + tasks_incremental
     train_dataset, test_dataset = get_dataset(dataset=args.dataset, data_path=args.data_path)
 
