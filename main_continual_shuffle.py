@@ -68,9 +68,7 @@ class IncrementalPT(pl.LightningModule):
         pl_loss = torch.diagonal(pl_loss)
         pl_loss = torch.mean(pl_loss)
         # pl cos loss
-        c = torch.index_select(self.w, dim=0, index=targets)
-        cos_matrix = F.normalize(x, p=2, dim=1) * F.normalize(c, p=2, dim=1)
-        pl_cosloss = -1. * torch.sum(cos_matrix)
+        pl_cosloss = 0.
         # all loss
         loss = ce_loss + pl_loss * LAMBDA1 + pl_cosloss * LAMBDA2
         self.log("c", ce_loss, on_epoch=True, sync_dist=True)
@@ -101,9 +99,7 @@ class IncrementalPT(pl.LightningModule):
         pl_loss = torch.diagonal(pl_loss)
         pl_loss = torch.mean(pl_loss)
         # pl cos loss
-        c = torch.index_select(self.w, dim=0, index=targets)
-        cos_matrix = F.normalize(x, p=2, dim=1) * F.normalize(c, p=2, dim=1)
-        pl_cosloss = -1. * torch.sum(cos_matrix)
+        pl_cosloss = 0.
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
@@ -119,10 +115,6 @@ class IncrementalPT(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         self.evaluate(batch, 'test')
 
-    def upadate_w(self, incremental_cn, means):
-        incremental_w = nn.Parameter(torch.tensor(means))
-        self.visable_cn = [self.visable_cn[1] + 1, self.visable_cn[1] + incremental_cn]
-        self.w = nn.Parameter(torch.cat((self.w, incremental_w), dim=0), requires_grad=True)
 
 
 if __name__ == '__main__':
@@ -168,7 +160,7 @@ if __name__ == '__main__':
     for task_idx in range(0, num_tasks + 1):
         EPOCHS = 300
         if task_idx == 0:
-            LAMBDA1 = 0.3
+            LAMBDA1 = 0.2
         else:
             LAMBDA1 = 0.
         LAMBDA2 = 0.
