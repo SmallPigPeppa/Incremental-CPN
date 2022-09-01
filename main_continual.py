@@ -32,7 +32,7 @@ def main():
             entity=args.entity,
             offline=False,
         )
-        if args.task_idx == 0:
+        if args == 0:
             wandb_logger.log_hyperparams(args)
         lr_monitor = LearningRateMonitor(logging_interval="epoch")
         train_dataset_task = split_dataset(
