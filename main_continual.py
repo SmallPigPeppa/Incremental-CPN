@@ -3,6 +3,7 @@ import pytorch_lightning as pl
 import wandb
 from torch.utils.data import DataLoader
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning import seed_everything
 from utils.dataset_utils import get_dataset, get_pretrained_dataset, split_dataset
 from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.encoder_utils import get_pretrained_encoder
@@ -11,6 +12,7 @@ from models.icpn import IncrementalCPN
 
 
 def main():
+
     args = parse_args_cpn()
     num_gpus = [0, 1]
     encoder = get_pretrained_encoder(args.pretrained_model)
