@@ -276,20 +276,20 @@ if __name__ == '__main__':
         checkpoint_callback=False,
         precision=16,
     )
-    train_dataset0 = split_dataset(
+    train_dataset_task = split_dataset(
         train_dataset,
         tasks=tasks,
         task_idx=[0],
     )
-    test_dataset0 = split_dataset(
+    test_dataset_task = split_dataset(
         test_dataset,
         tasks=tasks,
         task_idx=list(range(0 + 1)),
     )
-    train_dataset0, test_dataset0 = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset0,
-                                                           test_dataset=test_dataset0)
-    train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
+    train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset_task,
+                                                                   test_dataset=test_dataset_task)
+    train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
     wandb.finish()
 
@@ -304,20 +304,20 @@ if __name__ == '__main__':
             entity="pigpeppa",
             offline=False,
         )
-        train_dataset = split_dataset(
+        train_dataset_task = split_dataset(
             train_dataset,
             tasks=tasks,
             task_idx=[task_idx],
         )
-        test_dataset = split_dataset(
+        test_dataset_task = split_dataset(
             test_dataset,
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
-        train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset,
-                                                             test_dataset=test_dataset)
-        train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
-        test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
+        train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset_task,
+                                                             test_dataset=test_dataset_task)
+        train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
+        test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
 
         trainer = pl.Trainer(
             gpus=NUM_GPUS,
