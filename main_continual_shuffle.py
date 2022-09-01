@@ -128,7 +128,7 @@ class IncrementalPT(pl.LightningModule):
 if __name__ == '__main__':
     num_classes = 100
     num_tasks = 5
-    EPOCHS = 1000
+    EPOCHS = 300
     LAMBDA1 = 0.2
     LAMBDA2 = 0.
     LR = 0.3

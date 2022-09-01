@@ -26,7 +26,7 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
 def get_pretrained_encoder():
     ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt'
     # ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/barlow_twins/s5fh5bvf/barlow_twins-imagenet32-s5fh5bvf-ep=999.ckpt'
-    ckpt_path='/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt'
+    ckpt_path = '/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt'
     state = torch.load(ckpt_path)["state_dict"]
     for k in list(state.keys()):
         if "encoder" in k:
@@ -46,12 +46,11 @@ def get_pretrained_encoder():
     return encoder
 
 
-def get_pretrained_dataset(encoder,train_dataset,test_dataset):
+def get_pretrained_dataset(encoder, train_dataset, test_dataset):
     IMGSIZE = 32
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
     encoder.eval()
     encoder.to(device)
-
 
     train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=8,
                               pin_memory=True)
@@ -62,12 +61,12 @@ def get_pretrained_dataset(encoder,train_dataset,test_dataset):
     y_train = []
     y_test = []
     # encoder = nn.DataParallel(encoder)
-    for x, y in tqdm(iter(train_loader),desc="pretrain on trainset"):
+    for x, y in tqdm(iter(train_loader), desc="pretrain on trainset"):
         x = x.to(device)
         z = encoder(x)
         x_train.append(z.cpu().detach().numpy())
         y_train.append(y.cpu().detach().numpy())
-    for x, y in tqdm(iter(test_loader),desc="pretrain on testset"):
+    for x, y in tqdm(iter(test_loader), desc="pretrain on testset"):
         x = x.to(device)
         z = encoder(x)
         x_test.append(z.cpu().detach().numpy())
@@ -78,13 +77,14 @@ def get_pretrained_dataset(encoder,train_dataset,test_dataset):
     y_train = np.hstack(y_train)
     y_test = np.hstack(y_test)
 
-    print(x_train.shape, y_train.shape)
-    print(x_test.shape, y_test.shape)
+    print("x_train.shape", x_train.shape, "y_train.shape:", y_train.shape)
+    print("x_test.shape:", x_test.shape, "y_test.shape:", y_test.shape)
     # ds pretrained
     train_dataset_pretrained = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
     test_dataset_pretrained = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
 
     return train_dataset_pretrained, test_dataset_pretrained
+
 
 class IncrementalPT(pl.LightningModule):
     def __init__(self, cn, dim_feature, means):
@@ -145,7 +145,7 @@ class IncrementalPT(pl.LightningModule):
     def evaluate(self, batch, stage=None):
         x, targets = batch
         d = self(x)
-        logits=-1.*d
+        logits = -1. * d
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
         # pl loss
