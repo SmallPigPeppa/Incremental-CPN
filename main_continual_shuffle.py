@@ -41,6 +41,7 @@ class IncrementalPT(pl.LightningModule):
     def __init__(self, dim_feature, num_classes):
         super(IncrementalPT, self).__init__()
         self.dim_feature = dim_feature
+        self.num_calsses = num_classes
         self.prototypes = nn.ParameterList(
             [nn.Parameter(torch.randn(1, self.dim_feature)) for i in range(num_classes)])
 
