@@ -59,7 +59,7 @@ class IncrementalPT(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, targets = batch
-        d = self.incremental_forward(x)
+        d = self.forward(x)
         logits = -1. * d
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
