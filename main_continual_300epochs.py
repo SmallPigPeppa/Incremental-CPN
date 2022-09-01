@@ -1,22 +1,17 @@
-import torchvision
-
-from torch.utils.data import DataLoader
-from pytorch_lightning import LightningModule, Trainer, seed_everything
-from torch.nn import functional as F
-from torch import nn
 import torch
-from torchmetrics.functional import accuracy
-from torch.utils.data import TensorDataset, DataLoader
-from pytorch_lightning.loggers import TensorBoardLogger
-from tqdm import tqdm
-
-from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-from torch.optim.lr_scheduler import ExponentialLR, MultiStepLR, ReduceLROnPlateau
-from test_utils import get_pretrained_dataset, get_pretrained_encoder, split_dataset
-import argparse
+import torchvision
 import pytorch_lightning as pl
+import argparse
+import wandb
+from torch import nn
+from torch.utils.data import TensorDataset, DataLoader
+from torch.nn import functional as F
 from torchvision import transforms
-
+from torchmetrics.functional import accuracy
+from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning import LightningModule, Trainer, seed_everything
+from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
+from utils import get_pretrained_dataset, get_pretrained_encoder, split_dataset
 
 def parse_args_linear() -> argparse.Namespace:
     """Parses feature extractor, dataset, pytorch lightning, linear eval specific and additional args.
@@ -127,8 +122,6 @@ class PrototypeClassifier(nn.Module):
             self.prototypes[i].requires_grad = False
 
 
-
-
 class IncrementalPT(pl.LightningModule):
     def __init__(self, cn, dim_feature, means):
         super(IncrementalPT, self).__init__()
@@ -168,13 +161,13 @@ class IncrementalPT(pl.LightningModule):
         pl_cosloss = -1. * torch.sum(cos_matrix)
         # all loss
         loss = ce_loss + pl_loss * LAMBDA1 + pl_cosloss * LAMBDA2
-        self.log("c", ce_loss, prog_bar=True)
-        self.log("p1", pl_loss, prog_bar=True)
-        self.log("p2", pl_cosloss, prog_bar=True)
+        self.log("c", ce_loss, on_epoch=True, sync_dist=True)
+        self.log("p1", pl_loss, on_epoch=True, sync_dist=True)
+        self.log("p2", pl_cosloss, on_epoch=True, sync_dist=True)
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
-        self.log('acc', acc, prog_bar=True)
+        self.log('acc', acc, on_epoch=True, sync_dist=True)
         return loss
 
     def configure_optimizers(self):
@@ -188,10 +181,7 @@ class IncrementalPT(pl.LightningModule):
     def evaluate(self, batch, stage=None):
         x, targets = batch
         d = self(x)
-        logits=-1.*d
-        print(x.shape)
-        print(logits.shape)
-        print(targets.shape)
+        logits = -1. * d
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
         # pl loss
@@ -206,10 +196,10 @@ class IncrementalPT(pl.LightningModule):
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
         if stage:
-            self.log('cv', ce_loss, prog_bar=True)
-            self.log('p1v', pl_loss, prog_bar=True)
-            self.log('p2v', pl_cosloss, prog_bar=True)
-            self.log('vacc', acc, prog_bar=True)
+            self.log('cv', ce_loss, on_epoch=True, sync_dist=True)
+            self.log('p1v', pl_loss, on_epoch=True, sync_dist=True)
+            self.log('p2v', pl_cosloss, on_epoch=True, sync_dist=True)
+            self.log('vacc', acc, on_epoch=True, sync_dist=True)
 
     def validation_step(self, batch, batch_idx):
         self.evaluate(batch, 'val')
@@ -222,18 +212,19 @@ class IncrementalPT(pl.LightningModule):
         self.visable_cn = [self.visable_cn[1] + 1, self.visable_cn[1] + incremental_cn]
         self.w = nn.Parameter(torch.cat((self.w, incremental_w), dim=0), requires_grad=True)
 
+
 if __name__ == '__main__':
     num_classes = 100
     num_tasks = 5
-    EPOCHS = 1000
-    LAMBDA1= 0.2
+    EPOCHS = 300
+    LAMBDA1 = 0.2
     LAMBDA2 = 0.
     LR = 0.3
     BATCH_SIZE = 1024
-    NUM_GPUS = [2,3]
+    NUM_GPUS = [0,1]
     NUM_WORKERS = 1
-    INCREMENTAL_N=10
-    IMGSIZE=32
+    INCREMENTAL_N = 10
+    IMGSIZE = 32
     seed_everything(5)
     encoder = get_pretrained_encoder()
     data_path = '/share/wenzhuoliu/torch_ds'
@@ -253,9 +244,6 @@ if __name__ == '__main__':
                                                  transform=cifar_transforms,
                                                  download=True)
 
-
-
-
     # split classes into tasks
     classes_order = torch.tensor(list(range(num_classes)))
     # classes_order = torch.randperm(num_classes)
@@ -263,59 +251,67 @@ if __name__ == '__main__':
     tasks_incremental = classes_order[int(num_classes / 2):num_classes].chunk(num_tasks)
     tasks = tasks_initial + tasks_incremental
 
-
-
     # mmodel = IncrementalPT(cn=50, dim_feature=2048, means=mds.get_means(classes=range(50)))
 
-
-
-
-    mmodel = IncrementalPT(cn=50, dim_feature=2048, means=torch.rand([50,2048]))
+    mmodel = IncrementalPT(cn=50, dim_feature=2048, means=torch.rand([50, 2048]))
+    wandb_logger = WandbLogger(
+        name="task:0",
+        project="Incremental-CPN-v6",
+        entity="pigpeppa",
+        offline=False,
+    )
     trainer = pl.Trainer(
         gpus=NUM_GPUS,
         max_epochs=EPOCHS,
         accumulate_grad_batches=1,
         sync_batchnorm=True,
         accelerator='ddp',
-        logger=TensorBoardLogger(f"./logs/", name=f"cifar_{int(50 / INCREMENTAL_N)}steps_0"),
+        logger=wandb_logger,
         checkpoint_callback=False,
         precision=16,
     )
-    train_dataset0 = split_dataset(
+    train_dataset_task = split_dataset(
         train_dataset,
         tasks=tasks,
         task_idx=[0],
     )
-    test_dataset0 = split_dataset(
+    test_dataset_task = split_dataset(
         test_dataset,
         tasks=tasks,
         task_idx=list(range(0 + 1)),
     )
-    train_dataset0, test_dataset0 = get_pretrained_dataset(encoder=encoder,train_dataset=train_dataset0,test_dataset=test_dataset0)
-    train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
+    train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset_task,
+                                                                   test_dataset=test_dataset_task)
+    train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
+    wandb.finish()
 
-
-    for task_idx in range(1,num_tasks+1):
+    for task_idx in range(1, num_tasks + 1):
         EPOCHS = 300
         LAMBDA1 = 0.
         LAMBDA2 = 0.
-        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx]),2048]))
-        train_dataset = split_dataset(
+        mmodel.upadate_w(incremental_cn=10, means=torch.rand([len(tasks[task_idx]), 2048]))
+        wandb_logger = WandbLogger(
+            name=f"task:{task_idx}",
+            project="Incremental-CPN-v6",
+            entity="pigpeppa",
+            offline=False,
+        )
+        train_dataset_task = split_dataset(
             train_dataset,
             tasks=tasks,
             task_idx=[task_idx],
         )
-        test_dataset = split_dataset(
+        test_dataset_task = split_dataset(
             test_dataset,
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
-        train_dataset, test_dataset = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset,
-                                                             test_dataset=test_dataset)
-        train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
-        test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
+        train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder, train_dataset=train_dataset_task,
+                                                             test_dataset=test_dataset_task)
+        train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
+        test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
 
         trainer = pl.Trainer(
             gpus=NUM_GPUS,
@@ -323,9 +319,10 @@ if __name__ == '__main__':
             accumulate_grad_batches=1,
             sync_batchnorm=True,
             accelerator='ddp',
-            logger=TensorBoardLogger(f"./logs/", name=f"cifar_{int(50 / INCREMENTAL_N)}steps_{num_tasks+1}"),
+            logger=wandb_logger,
             checkpoint_callback=False,
             precision=16,
 
         )
         trainer.fit(mmodel, train_loader, test_loader)
+        wandb.finish()
