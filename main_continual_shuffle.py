@@ -7,7 +7,6 @@ from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 from torch.nn import functional as F
 from torchvision import transforms
-from torchmetrics.functional import accuracy
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import LightningModule, Trainer, seed_everything
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
