@@ -1,0 +1,8 @@
+pytorch-lightning
+torch
+torchvision
+tqdm
+numpy
+scipy
+quadprog
+POT
