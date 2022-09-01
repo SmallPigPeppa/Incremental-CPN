@@ -28,7 +28,7 @@ def main():
         model.task_initial(current_tasks=tasks[task_idx])
         wandb_logger = WandbLogger(
             name=f"{args.dataset}-{args.pretrained_method}-{args.num_tasks}tasks-steps{task_idx}-lambda{args.pl_lambda}",
-            project="Incremental-CPN-v7",
+            project="Incremental-CPN-v6",
             entity="pigpeppa",
             offline=False,
         )
