@@ -12,7 +12,7 @@ from models.icpn import IncrementalCPN
 
 
 def main():
-
+    seed_everything(5)
     args = parse_args_cpn()
     num_gpus = [0, 1]
     encoder = get_pretrained_encoder(args.pretrained_model)
