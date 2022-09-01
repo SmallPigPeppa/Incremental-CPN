@@ -3,9 +3,9 @@ import pytorch_lightning as pl
 import wandb
 from torch.utils.data import TensorDataset, DataLoader
 from pytorch_lightning.loggers import WandbLogger
-from utils.dataset_utils import get_dataset,get_pretrained_dataset,split_dataset
-from utils.encoder_utils import  get_pretrained_encoder
-from args import parse_args_cpn
+from utils.dataset_utils import get_dataset, get_pretrained_dataset, split_dataset
+from utils.encoder_utils import get_pretrained_encoder
+from utils.args_utils import parse_args_cpn
 from models.icpn import IncrementalCPN
 
 
