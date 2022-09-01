@@ -16,6 +16,7 @@ from test_utils import get_pretrained_dataset, get_pretrained_encoder, split_dat
 import argparse
 import pytorch_lightning as pl
 from torchvision import transforms
+import wandb
 
 
 def parse_args_linear() -> argparse.Namespace:
@@ -290,6 +291,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_dataset0, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset0, batch_size=64, shuffle=True)
     trainer.fit(mmodel, train_loader, test_loader)
+    wandb.finish()
 
     for task_idx in range(1, num_tasks + 1):
         EPOCHS = 300
@@ -329,3 +331,4 @@ if __name__ == '__main__':
 
         )
         trainer.fit(mmodel, train_loader, test_loader)
+        wandb.finish()
