@@ -40,7 +40,7 @@ def parse_args_linear() -> argparse.Namespace:
 class IncrementalPT(pl.LightningModule):
     def __init__(self, dim_feature, num_classes):
         super(IncrementalPT, self).__init__()
-        self.features_dim = dim_feature
+        self.dim_feature = dim_feature
         self.num_calsses = num_classes
         self.prototypes = nn.ParameterList(
             [nn.Parameter(torch.randn(1, self.dim_feature)) for i in range(num_classes)])
@@ -51,7 +51,7 @@ class IncrementalPT(pl.LightningModule):
             self.prototypes[i].requires_grad = False
 
     def forward(self, x):
-        x = x.reshape(-1, 1, self.features_dim)
+        x = x.reshape(-1, 1, self.dim_feature)
         prototypes_list = [i for i in self.prototypes]
         d = torch.pow(x - torch.cat(prototypes_list), 2)
         d = torch.sum(d, dim=2)
