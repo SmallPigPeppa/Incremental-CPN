@@ -33,7 +33,9 @@ def parse_args_cpn() -> argparse.Namespace:
     parser.add_argument("--warmup_epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--lr", type=float, default=0.3)
+
+    parser.add_argument("--project", type=str, default="Incremental-CPN-v8.0")
+    parser.add_argument("--entity", type=str, default="pigpeppa")
     # parse args
     args = parser.parse_args()
-
     return args

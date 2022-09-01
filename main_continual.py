@@ -1,9 +1,10 @@
 import torch
 import pytorch_lightning as pl
 import wandb
-from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import DataLoader
 from pytorch_lightning.loggers import WandbLogger
 from utils.dataset_utils import get_dataset, get_pretrained_dataset, split_dataset
+from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.encoder_utils import get_pretrained_encoder
 from utils.args_utils import parse_args_cpn
 from models.icpn import IncrementalCPN
@@ -27,10 +28,13 @@ def main():
         model.task_initial(current_tasks=tasks[task_idx])
         wandb_logger = WandbLogger(
             name=f"{args.dataset}-{args.pretrained_method}-lambda{args.pl_lambda}-{args.num_tasks}tasks-steps{task_idx}",
-            project="Incremental-CPN-v6",
-            entity="pigpeppa",
+            project=args.project,
+            entity=args.entity,
             offline=False,
         )
+        if args.task_idx == 0:
+            wandb_logger.log_hyperparams(args)
+        lr_monitor = LearningRateMonitor(logging_interval="epoch")
         train_dataset_task = split_dataset(
             train_dataset,
             tasks=tasks,
@@ -56,6 +60,7 @@ def main():
             logger=wandb_logger,
             checkpoint_callback=False,
             precision=16,
+            callbacks=[lr_monitor]
 
         )
         trainer.fit(model, train_loader, test_loader)
