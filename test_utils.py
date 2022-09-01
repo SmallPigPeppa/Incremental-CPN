@@ -61,7 +61,7 @@ def get_pretrained_dataset(encoder,train_dataset,test_dataset):
     x_test = []
     y_train = []
     y_test = []
-    encoder = nn.DataParallel(encoder)
+    # encoder = nn.DataParallel(encoder)
     for x, y in tqdm(iter(train_loader),desc="pretrain on trainset"):
         x = x.to(device)
         z = encoder(x)
