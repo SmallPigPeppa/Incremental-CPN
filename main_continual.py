@@ -13,7 +13,6 @@ from models.icpn import IncrementalCPN
 def main():
     args = parse_args_cpn()
     num_gpus = [0, 1]
-
     encoder = get_pretrained_encoder(args.pretrained_model)
     model = IncrementalCPN(**args.__dict__)
 
