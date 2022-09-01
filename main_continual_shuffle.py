@@ -49,6 +49,8 @@ class IncrementalPT(pl.LightningModule):
         no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
         for i in no_grad_idx:
             self.prototypes[i].requires_grad = False
+        for i in current_tasks:
+            self.prototypes[i].requires_grad = True
 
     def forward(self, x):
         x = x.reshape(-1, 1, self.dim_feature)
