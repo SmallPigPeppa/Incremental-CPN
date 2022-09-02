@@ -21,7 +21,7 @@ class IncrementalCPN(pl.LightningModule):
     def task_initial(self, current_tasks, means=None):
         if means is not None:
             for i in current_tasks:
-                self.prototypes[i].data = torch.nn.Parameter((means[str(i)]).reshape(1, -1))
+                self.prototypes[i].data = torch.nn.Parameter((means[i]).reshape(1, -1))
         no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
         for i in no_grad_idx:
             self.prototypes[i].requires_grad = False
