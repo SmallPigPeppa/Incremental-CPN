@@ -37,7 +37,7 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     return task_dataset
 
 
-def get_pretrained_dataset(encoder, train_dataset, test_dataset):
+def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=False):
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
     encoder.eval()
     encoder.to(device)
@@ -73,4 +73,15 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset):
     train_dataset_pretrained = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
     test_dataset_pretrained = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
 
-    return train_dataset_pretrained, test_dataset_pretrained
+    if return_means:
+        means = {}
+        current_tasks = np.unique(y_train)
+        for i in current_tasks:
+            index_i = y_train == i
+            x_train_i = x_train[index_i]
+            mean_i = np.mean(x_train_i, axis=0)
+            means.update({i: torch.tensor(mean_i)})
+            # return np.array(means)
+            return train_dataset_pretrained, test_dataset_pretrained, means
+    else:
+        return train_dataset_pretrained, test_dataset_pretrained
