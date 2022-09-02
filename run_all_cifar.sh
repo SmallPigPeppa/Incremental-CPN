@@ -61,7 +61,7 @@ python main_continual.py \
 
 
 python main_continual.py \
-      --num_tasks 5 \
+      --num_tasks 10 \
       --pretrained_model /share/wenzhuoliu/code/solo-learn/trained_models/simsiam/22bn8hmt/simsiam-imagenet32-22bn8hmt-ep=999.ckpt \
       --pretrained_method simsiam \
       --pl_lambda $lambda
@@ -75,7 +75,7 @@ python main_continual.py \
 
 
 python main_continual.py \
-      --num_tasks 5 \
+      --num_tasks 10 \
       --pretrained_model /share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt \
       --pretrained_method swav \
       --pl_lambda $lambda
