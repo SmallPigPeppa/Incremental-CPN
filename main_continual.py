@@ -56,6 +56,7 @@ def main():
             train_dataset_task, test_dataset_task, cpn_means = get_pretrained_dataset(encoder=encoder,
                                                                                       train_dataset=train_dataset_task,
                                                                                       test_dataset=test_dataset_task,return_means=True)
+            print(cpn_means)
             model.task_initial(current_tasks=tasks[task_idx], means=cpn_means)
         else:
             train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder,
