@@ -18,12 +18,13 @@ def main():
     encoder = get_pretrained_encoder(args.pretrained_model)
     model = IncrementalCPN(**args.__dict__)
 
-
     classes_order = torch.tensor(
         [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28,
-         53,13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97, 2,
-         64,66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7, 63, 75,
-         5,32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33])
+         53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97,
+         2,
+         64, 66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7, 63,
+         75,
+         5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33])
     # classes_order = torch.randperm(num_classes)
     # classes_order = torch.tensor(list(range(args.num_classes)))
     tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
@@ -32,9 +33,8 @@ def main():
     train_dataset, test_dataset = get_dataset(dataset=args.dataset, data_path=args.data_path)
 
     for task_idx in range(0, args.num_tasks + 1):
-        model.task_initial(current_tasks=tasks[task_idx])
         wandb_logger = WandbLogger(
-            name=f"{args.dataset}-{args.pretrained_method}-lambda{args.pl_lambda}-{args.num_tasks}tasks-steps{task_idx}",
+            name=f"{args.perfix}{args.dataset}-{args.pretrained_method}-lambda{args.pl_lambda}-{args.num_tasks}tasks-steps{task_idx}",
             project=args.project,
             entity=args.entity,
             offline=False,
@@ -52,12 +52,19 @@ def main():
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
-        train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder,
-                                                                       train_dataset=train_dataset_task,
-                                                                       test_dataset=test_dataset_task)
+        if args.cpn_initial == "means":
+            train_dataset_task, test_dataset_task, cpn_means = get_pretrained_dataset(encoder=encoder,
+                                                                                      train_dataset=train_dataset_task,
+                                                                                      test_dataset=test_dataset_task)
+            model.task_initial(current_tasks=tasks[task_idx], means=cpn_means)
+        else:
+            train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder,
+                                                                           train_dataset=train_dataset_task,
+                                                                           test_dataset=test_dataset_task)
+            model.task_initial(current_tasks=tasks[task_idx])
+
         train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
         test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
-
         trainer = pl.Trainer(
             gpus=num_gpus,
             max_epochs=args.epochs,
