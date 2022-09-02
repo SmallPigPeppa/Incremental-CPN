@@ -16,4 +16,10 @@ do
         --pl_lambda $lambda
 
 
+  CUDA_VISIBLE_DEVICES=6,7 python main_continual.py \
+      --num_tasks 10 \
+      --pretrained_model /share/wenzhuoliu/code/solo-learn/trained_models/swav/yaaves5o/swav-imagenet32-yaaves5o-ep=999.ckpt \
+      --pretrained_method swav \
+      --pl_lambda $lambda
+
 done
