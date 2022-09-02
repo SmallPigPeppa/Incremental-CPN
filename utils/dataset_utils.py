@@ -76,13 +76,11 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
     if return_means:
         means = {}
         current_tasks = np.unique(y_train)
-        print(current_tasks)
         for i in current_tasks:
             index_i = y_train == i
             x_train_i = x_train[index_i]
             mean_i = np.mean(x_train_i, axis=0)
             means.update({torch.tensor(i): torch.tensor(mean_i)})
-            # return np.array(means)
-            return train_dataset_pretrained, test_dataset_pretrained, means
+        return train_dataset_pretrained, test_dataset_pretrained, means
     else:
         return train_dataset_pretrained, test_dataset_pretrained
