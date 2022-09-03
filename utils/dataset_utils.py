@@ -44,6 +44,8 @@ def get_dataset(dataset, data_path):
                                              transform=imagenet_tansforms)
         test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader,
                                             transform=imagenet_tansforms)
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), loader=pil_loader)
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader)
 
     return train_dataset, test_dataset
 
@@ -104,3 +106,8 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
         return train_dataset_pretrained, test_dataset_pretrained, means
     else:
         return train_dataset_pretrained, test_dataset_pretrained
+
+
+if __name__=="__main__":
+    train_dataset, test_dataset = get_dataset(dataset="imagenet100", data_path="/share/wenzhuoliu/torch_ds")
+    print(train_dataset[0])
