@@ -10,15 +10,15 @@ import os
 from PIL import Image
 
 
-# def pil_loader(path):
-#     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-#     with open(path, 'rb') as f:
-#         img = Image.open(f)
-#         return img.convert('RGB')
-
 def pil_loader(path):
-    img=torchvision.io.read_image(path=path)
-    return img
+    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+    with open(path, 'rb') as f:
+        img = Image.open(f)
+        return img.convert('RGB')
+
+# def pil_loader(path):
+#     img=torchvision.io.read_image(path=path)
+#     return img
 
 def get_dataset(dataset, data_path):
     assert dataset in ["cifar100", "imagenet100"]
@@ -113,4 +113,4 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
 
 if __name__=="__main__":
     train_dataset, test_dataset = get_dataset(dataset="imagenet100", data_path="/share/wenzhuoliu/torch_ds")
-    print(str(train_dataset[0]))
+    print(train_dataset[0])
