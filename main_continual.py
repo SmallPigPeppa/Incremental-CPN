@@ -52,20 +52,17 @@ def main():
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
-        if args.cpn_initial == "means":
-            train_dataset_task, test_dataset_task, cpn_means = get_pretrained_dataset(encoder=encoder,
-                                                                                      train_dataset=train_dataset_task,
-                                                                                      test_dataset=test_dataset_task,return_means=True)
-            print(cpn_means)
-            model.task_initial(current_tasks=tasks[task_idx], means=cpn_means)
-        else:
-            train_dataset_task, test_dataset_task = get_pretrained_dataset(encoder=encoder,
-                                                                           train_dataset=train_dataset_task,
-                                                                           test_dataset=test_dataset_task)
-            model.task_initial(current_tasks=tasks[task_idx])
-
+        train_dataset_task, test_dataset_task, cpn_means = get_pretrained_dataset(
+            encoder=encoder,
+            train_dataset=train_dataset_task,
+            test_dataset=test_dataset_task,
+            return_means=True)
         train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
         test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
+        if args.cpn_initial == "means":
+            model.task_initial(current_tasks=tasks[task_idx], means=cpn_means)
+        else:
+            model.task_initial(current_tasks=tasks[task_idx])
         trainer = pl.Trainer(
             gpus=num_gpus,
             max_epochs=args.epochs,
