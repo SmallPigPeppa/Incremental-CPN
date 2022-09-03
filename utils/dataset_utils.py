@@ -1,11 +1,12 @@
 import torch
 import numpy as np
 import torchvision
-from torchvision import transforms
+from torchvision import datasets, transforms
 from torch.utils.data.dataset import Dataset, Subset
 from torch.utils.data import TensorDataset, DataLoader
 from typing import Callable, Optional, Tuple, Union, List
 from tqdm import tqdm
+import os
 
 
 def get_dataset(dataset, data_path):
@@ -24,6 +25,15 @@ def get_dataset(dataset, data_path):
     elif dataset == "imagenet100":
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
+        data_path = os.path.join(data_path, "imagenet100")
+        imagenet_tansforms = [
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=mean, std=std),
+        ]
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), transform=imagenet_tansforms)
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), transform=imagenet_tansforms)
 
     return train_dataset, test_dataset
 
