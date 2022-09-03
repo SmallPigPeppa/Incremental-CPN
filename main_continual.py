@@ -15,7 +15,11 @@ def main():
     seed_everything(5)
     args = parse_args_cpn()
     num_gpus = [0, 1]
-    encoder = get_pretrained_encoder(args.pretrained_model)
+    if "cifar" in args.dataset:
+        encoder = get_pretrained_encoder(args.pretrained_model,cifar=True)
+    else:
+        encoder = get_pretrained_encoder(args.pretrained_model, cifar=False)
+
     model = IncrementalCPN(**args.__dict__)
 
     classes_order = torch.tensor(

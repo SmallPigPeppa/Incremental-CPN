@@ -7,6 +7,14 @@ from torch.utils.data import TensorDataset, DataLoader
 from typing import Callable, Optional, Tuple, Union, List
 from tqdm import tqdm
 import os
+from PIL import Image
+
+
+def pil_loader(path):
+    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+    with open(path, 'rb') as f:
+        img = Image.open(f)
+        return img.convert('RGB')
 
 
 def get_dataset(dataset, data_path):
@@ -32,8 +40,10 @@ def get_dataset(dataset, data_path):
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ]
-        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), transform=imagenet_tansforms)
-        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), transform=imagenet_tansforms)
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), loader=pil_loader,
+                                             transform=imagenet_tansforms)
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader,
+                                            transform=imagenet_tansforms)
 
     return train_dataset, test_dataset
 
