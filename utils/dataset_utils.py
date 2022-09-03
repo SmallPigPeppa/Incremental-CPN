@@ -10,12 +10,15 @@ import os
 from PIL import Image
 
 
-def pil_loader(path):
-    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    with open(path, 'rb') as f:
-        img = Image.open(f)
-        return img.convert('RGB')
+# def pil_loader(path):
+#     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+#     with open(path, 'rb') as f:
+#         img = Image.open(f)
+#         return img.convert('RGB')
 
+def pil_loader(path):
+    img=torchvision.io.read_image(path=path)
+    return img
 
 def get_dataset(dataset, data_path):
     assert dataset in ["cifar100", "imagenet100"]
