@@ -113,4 +113,4 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
 
 if __name__=="__main__":
     train_dataset, test_dataset = get_dataset(dataset="imagenet100", data_path="/share/wenzhuoliu/torch_ds")
-    print(train_dataset[0])
+    print(str(train_dataset[0]))
