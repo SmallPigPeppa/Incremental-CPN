@@ -1,5 +1,5 @@
 conda activate torch
-python main_continual.py \
+CUDA_VISIBLE_DEVICES=4,5 python main_continual.py \
       --num_tasks 5 \
       --pretrained_model /share/wenzhuoliu/code/ssl-pretrained-models/simclr_imagenet.ckpt \
       --pretrained_method simclr \
@@ -8,7 +8,7 @@ python main_continual.py \
       --dataset imagenet100 \
       --project Incremental-CPN-Imagenet100
 
-python main_continual.py \
+CUDA_VISIBLE_DEVICES=4,5 python main_continual.py \
       --num_tasks 10 \
       --pretrained_model /share/wenzhuoliu/code/ssl-pretrained-models/simclr_imagenet.ckpt \
       --pretrained_method simclr \
