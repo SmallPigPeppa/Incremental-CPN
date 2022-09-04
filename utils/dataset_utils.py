@@ -16,6 +16,7 @@ def pil_loader(path):
         img = Image.open(f)
         return img.convert('RGB')
 
+
 # def pil_loader(path):
 #     img=torchvision.io.read_image(path=path)
 #     return img
@@ -37,18 +38,16 @@ def get_dataset(dataset, data_path):
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
         data_path = os.path.join(data_path, "imagenet100")
-        imagenet_tansforms = [
+        imagenet_tansforms = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
-        ]
+        ])
         train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), loader=pil_loader,
                                              transform=imagenet_tansforms)
         test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader,
                                             transform=imagenet_tansforms)
-        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), loader=pil_loader)
-        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader)
 
     return train_dataset, test_dataset
 
@@ -111,6 +110,6 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
         return train_dataset_pretrained, test_dataset_pretrained
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     train_dataset, test_dataset = get_dataset(dataset="imagenet100", data_path="/share/wenzhuoliu/torch_ds")
     print(train_dataset[0])
