@@ -10,7 +10,7 @@ import os
 
 
 def get_dataset(dataset, data_path):
-    assert dataset in ["cifar100", "imagenet100"]
+    # assert dataset in ["cifar100", "imagenet100"]
     if dataset == "cifar100":
         mean = [0.5071, 0.4867, 0.4408]
         std = [0.2675, 0.2565, 0.2761]
