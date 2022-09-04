@@ -5,10 +5,10 @@ from torchvision.models import resnet50
 
 
 def get_pretrained_encoder(ckpt_path, cifar=True):
-    state = torch.load(ckpt_path)["state_dict"]
+    state = torch.load(ckpt_path,map_location="cpu")["state_dict"]
     for k in list(state.keys()):
         if "encoder" in k:
-            state[k.replace("encoder", "backbone")] = state[k]
+            state[k.replace("encoder.", "")] = state[k]
             warnings.warn(
                 "You are using an older checkpoint. Use a new one as some issues might arrise."
             )
