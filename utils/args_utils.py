@@ -23,6 +23,8 @@ def parse_args_cpn() -> argparse.Namespace:
     # cpn
     parser.add_argument("--pl_lambda", type=float, default=0.2)
     parser.add_argument("--dim_feature", type=int, default=2048)
+    parser.add_argument("--tau", type=float, default=1.0)
+
 
     parser.add_argument("--cpn_initial", type=str, choices=["random", "means"], default="random")
 

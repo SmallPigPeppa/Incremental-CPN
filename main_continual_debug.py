@@ -16,7 +16,7 @@ def main():
     args = parse_args_cpn()
     num_gpus = [0]
     if "cifar" in args.dataset:
-        encoder = get_pretrained_encoder(args.pretrained_model,cifar=True)
+        encoder = get_pretrained_encoder(args.pretrained_model, cifar=True)
     else:
         encoder = get_pretrained_encoder(args.pretrained_model, cifar=False)
 
@@ -60,6 +60,7 @@ def main():
             encoder=encoder,
             train_dataset=train_dataset_task,
             test_dataset=test_dataset_task,
+            tau=args.tau,
             return_means=True)
         train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
         test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
@@ -79,9 +80,9 @@ def main():
             callbacks=[lr_monitor]
 
         )
-        batch=next(iter(train_loader))
+        batch = next(iter(train_loader))
         x, targets = batch
-        print(x.shape,targets.shape)
+        print(x.shape, targets.shape)
         trainer.fit(model, train_loader, test_loader)
         wandb.finish()
 
