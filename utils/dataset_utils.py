@@ -7,19 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from typing import Callable, Optional, Tuple, Union, List
 from tqdm import tqdm
 import os
-from PIL import Image
 
-
-def pil_loader(path):
-    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    with open(path, 'rb') as f:
-        img = Image.open(f)
-        return img.convert('RGB')
-
-
-# def pil_loader(path):
-#     img=torchvision.io.read_image(path=path)
-#     return img
 
 def get_dataset(dataset, data_path):
     assert dataset in ["cifar100", "imagenet100"]
@@ -44,10 +32,20 @@ def get_dataset(dataset, data_path):
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
-        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"), loader=pil_loader,
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"),
                                              transform=imagenet_tansforms)
-        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader,
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
                                             transform=imagenet_tansforms)
+    elif dataset == "imagenet-subset":
+        mean = [0.485, 0.456, 0.406]
+        std = [0.229, 0.224, 0.225]
+        data_path = os.path.join(data_path, "imagenet-subset")
+        imagenet_tansforms = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=mean, std=std),
+        ])
         train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"),
                                              transform=imagenet_tansforms)
         test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
