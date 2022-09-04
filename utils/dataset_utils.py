@@ -63,7 +63,7 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     return task_dataset
 
 
-def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=False):
+def get_pretrained_dataset(encoder, train_dataset, test_dataset, tau=1.0, return_means=False):
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
     encoder.eval()
     encoder.to(device)
@@ -93,6 +93,8 @@ def get_pretrained_dataset(encoder, train_dataset, test_dataset, return_means=Fa
     y_train = np.hstack(y_train)
     y_test = np.hstack(y_test)
 
+    x_train = tau * x_train
+    x_test = tau * x_test
     print("x_train.shape", x_train.shape, "y_train.shape:", y_train.shape)
     print("x_test.shape:", x_test.shape, "y_test.shape:", y_test.shape)
     # ds pretrained
