@@ -19,7 +19,7 @@ def get_pretrained_encoder(ckpt_path, cifar=True):
     if cifar:
         encoder.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
         encoder.maxpool = nn.Identity()
-        encoder.fc = nn.Identity()
+    encoder.fc = nn.Identity()
     encoder.load_state_dict(state, strict=False)
     print(f"Loaded {ckpt_path}")
     return encoder
