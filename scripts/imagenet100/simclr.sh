@@ -4,10 +4,9 @@ CUDA_VISIBLE_DEVICES=4,5 python main_continual_debug.py \
       --pretrained_model /share/wenzhuoliu/code/ssl-pretrained-models/simclr_imagenet.ckpt \
       --pretrained_method simclr \
       --cpn_initial means \
-      --pl_lambda 0.1 \
+      --pl_lambda 0.2 \
       --dataset imagenet100 \
       --project Incremental-CPN-Imagenet100 \
-      --tau 10.0
 
 #CUDA_VISIBLE_DEVICES=4,5 python main_continual.py \
 #      --num_tasks 10 \
