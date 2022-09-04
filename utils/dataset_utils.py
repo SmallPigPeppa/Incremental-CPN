@@ -48,6 +48,10 @@ def get_dataset(dataset, data_path):
                                              transform=imagenet_tansforms)
         test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"), loader=pil_loader,
                                             transform=imagenet_tansforms)
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"),
+                                             transform=imagenet_tansforms)
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
+                                            transform=imagenet_tansforms)
 
     return train_dataset, test_dataset
 
