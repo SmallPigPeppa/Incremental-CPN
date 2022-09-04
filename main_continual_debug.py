@@ -79,7 +79,9 @@ def main():
             callbacks=[lr_monitor]
 
         )
-        print(next(iter(train_loader)))
+        batch=next(iter(train_loader))
+        x, targets = batch
+        print(x.shape,targets.shape)
         trainer.fit(model, train_loader, test_loader)
         wandb.finish()
 
