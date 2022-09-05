@@ -6,7 +6,8 @@ CUDA_VISIBLE_DEVICES=4,5 python main_continual_debug.py \
       --cpn_initial means \
       --pl_lambda 0.3 \
       --dataset imagenet-subset \
-      --project Incremental-CPN-Imagenet100
+      --project Incremental-CPN-Imagenet100 \
+      --perfix debug
 
 #CUDA_VISIBLE_DEVICES=4,5 python main_continual.py \
 #      --num_tasks 10 \

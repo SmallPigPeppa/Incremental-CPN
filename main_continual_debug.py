@@ -30,7 +30,7 @@ def main():
          75,
          5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33])
     # classes_order = torch.randperm(num_classes)
-    # classes_order = torch.tensor(list(range(args.num_classes)))
+    classes_order = torch.tensor(list(range(args.num_classes)))
     tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
     tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(args.num_tasks)
     tasks = tasks_initial + tasks_incremental
