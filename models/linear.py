@@ -5,9 +5,9 @@ from torch.nn import functional as F
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 
 
-class IncrementalCPN(pl.LightningModule):
+class MLP(pl.LightningModule):
     def __init__(self, dim_feature, num_classes, pl_lambda, lr, epochs, warmup_epochs, **kwargs):
-        super(IncrementalCPN, self).__init__()
+        super(MLP, self).__init__()
         self.dim_feature = dim_feature
         self.num_calsses = num_classes
         self.pl_lambda = pl_lambda
@@ -15,8 +15,7 @@ class IncrementalCPN(pl.LightningModule):
         self.epochs = epochs
         self.warmup_epochs = warmup_epochs
         self.extra_args = kwargs
-        self.prototypes = nn.ParameterList(
-            [nn.Parameter(torch.randn(1, self.dim_feature)) for i in range(num_classes)])
+        self.self.model = nn.Linear(dim_feature, num_classes)
 
     def task_initial(self, current_tasks, means=None):
         if means is not None:
@@ -35,28 +34,18 @@ class IncrementalCPN(pl.LightningModule):
         return [optimizer], [scheduler]
 
     def forward(self, x):
-        x = x.reshape(-1, 1, self.dim_feature)
-        prototypes_list = [i for i in self.prototypes]
-        d = torch.pow(x - torch.cat(prototypes_list), 2)
-        d = torch.sum(d, dim=2)
-        return d
+        out = self.model(x)
+        return out
 
     def share_step(self, batch, batch_idx):
         x, targets = batch
-        d = self.forward(x)
-        logits = -1. * d
+        logits = self.forward(x)
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
-        # pl loss
-        pl_loss = torch.index_select(d, dim=1, index=targets)
-        pl_loss = torch.diagonal(pl_loss)
-        pl_loss = torch.mean(pl_loss)
-        # all loss
-        loss = ce_loss + pl_loss * self.pl_lambda
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
-        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "acc": acc, "loss": loss}
+        return {"acc": acc, "loss": ce_loss}
 
     def training_step(self, batch, batch_idx):
         out = self.share_step(batch, batch_idx)
