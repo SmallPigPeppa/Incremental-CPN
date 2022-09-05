@@ -5,7 +5,7 @@ CUDA_VISIBLE_DEVICES=3 python main_joint.py \
       --pretrained_method simclr \
       --cpn_initial means \
       --pl_lambda 0.15 \
-      --dataset imagenet100 \
+      --dataset imagenet-subset \
       --project Incremental-CPN-debug
 
 #CUDA_VISIBLE_DEVICES=4,5 python main_continual.py \
