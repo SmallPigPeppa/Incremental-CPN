@@ -15,7 +15,7 @@ class MLP(pl.LightningModule):
         self.epochs = epochs
         self.warmup_epochs = warmup_epochs
         self.extra_args = kwargs
-        self.self.model = nn.Linear(dim_feature, num_classes)
+        self.model = nn.Linear(dim_feature, num_classes)
 
     def task_initial(self, current_tasks, means=None):
         if means is not None:
