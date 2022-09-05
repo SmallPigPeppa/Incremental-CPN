@@ -4,7 +4,7 @@ CUDA_VISIBLE_DEVICES=4,5 python main_continual_debug.py \
       --pretrained_model /share/wenzhuoliu/code/ssl-pretrained-models/simclr_imagenet.ckpt \
       --pretrained_method simclr \
       --cpn_initial means \
-      --pl_lambda 0.3 \
+      --pl_lambda 0.15 \
       --dataset imagenet-subset \
       --project Incremental-CPN-Imagenet100 \
       --perfix debug
