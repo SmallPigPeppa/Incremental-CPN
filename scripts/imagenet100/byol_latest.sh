@@ -9,7 +9,8 @@ CUDA_VISIBLE_DEVICES=1 python main_continual.py \
       --pretrained_method byol \
       --pl_lambda $lambda \
       --dataset imagenet100 \
-      --project Incremental-CPN-Imagenet100
+      --project Incremental-CPN-Imagenet100 \
+      --perfix latest-
 
 #python main_continual.py \
 #      --num_tasks 10 \
