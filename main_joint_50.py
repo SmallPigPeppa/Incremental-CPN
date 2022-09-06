@@ -31,7 +31,7 @@ def main():
     import os
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
-    data_path = os.path.join(args.data_path, "imagenet-subset")
+    data_path = os.path.join(args.data_path, "imagenet100")
     imagenet_tansforms = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -43,6 +43,13 @@ def main():
     test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
                                         transform=imagenet_tansforms)
     classes_order = torch.tensor(list(range(args.num_classes)))
+    classes_order = torch.tensor(
+        [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28,
+         53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97,
+         2,
+         64, 66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7, 63,
+         75,
+         5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33])
     tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
     tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(args.num_tasks)
     tasks = tasks_initial + tasks_incremental

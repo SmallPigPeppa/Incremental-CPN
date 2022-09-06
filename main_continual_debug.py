@@ -38,7 +38,7 @@ def main():
 
     for task_idx in range(0, args.num_tasks + 1):
         wandb_logger = WandbLogger(
-            name=f"{args.perfix}{args.dataset}-{args.pretrained_method}-lambda1{args.lambda1}-lambda2{args.lambda2}-{args.num_tasks}tasks-steps{task_idx}",
+            name=f"{args.perfix}{args.dataset}-{args.pretrained_method}-lambda1:{args.lambda1}-lambda2:{args.lambda2}-{args.num_tasks}tasks-steps{task_idx}",
             project=args.project,
             entity=args.entity,
             offline=False,
