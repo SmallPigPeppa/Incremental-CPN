@@ -3,7 +3,7 @@ lambda=0.2
 pretrained_dir=/share/wenzhuoliu/code/ssl-pretrained-models/byol
 pretrained_path="$(ls $pretrained_dir/*.ckpt)"
 echo "pretrained_path: $pretrained_path"
-python main_continual.py \
+CUDA_VISIBLE_DEVICES=1 python main_continual.py \
       --num_tasks 5 \
       --pretrained_model $pretrained_path \
       --pretrained_method byol \
