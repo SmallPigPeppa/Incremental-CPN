@@ -22,6 +22,8 @@ def parse_args_cpn() -> argparse.Namespace:
     parser.add_argument("--num_tasks", type=int, default=5)
     # cpn
     parser.add_argument("--pl_lambda", type=float, default=0.2)
+    parser.add_argument("--lambda1", type=float, default=0.1)
+    parser.add_argument("--lambda2", type=float, default=0.1)
     parser.add_argument("--dim_feature", type=int, default=2048)
     parser.add_argument("--tau", type=float, default=1.0)
 
