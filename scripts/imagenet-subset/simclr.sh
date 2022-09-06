@@ -5,7 +5,8 @@ CUDA_VISIBLE_DEVICES=4,5 python main_continual_debug.py \
       --pretrained_method simclr \
       --cpn_initial means \
       --lambda1 0.1 \
-      --lambda2 0.1 \
+      --lambda2 0. \
+      --batch_size 1024 \
       --dataset imagenet-subset \
       --project Incremental-CPN-Imagenet100 \
       --perfix debug
