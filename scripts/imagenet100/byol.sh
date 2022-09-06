@@ -4,7 +4,6 @@ python main_continual.py \
       --num_tasks 5 \
       --pretrained_model /share/wenzhuoliu/code/ssl-pretrained-models/byol-resnet50-imagenet-100ep-25x5nqle-ep=99.ckpt \
       --pretrained_method byol \
-      --cpn_initial means \
       --pl_lambda $lambda \
       --dataset imagenet100 \
       --project Incremental-CPN-Imagenet100
