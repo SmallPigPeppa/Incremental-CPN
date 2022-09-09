@@ -14,8 +14,9 @@ def parse_args_cpn() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--pretrained_model", type=str,
-                        required=True)
+    # parser.add_argument("--pretrained_model", type=str,
+    #                     required=True)
+    parser.add_argument("--pretrained_model", type=str)
     parser.add_argument("--pretrained_method", type=str,
                         required=True)
     # incremental
