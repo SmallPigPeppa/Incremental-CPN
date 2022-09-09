@@ -15,7 +15,7 @@ labels = ['n02106382', 'n02107142', 'n02109047', 'n02110063', 'n02111889', 'n021
 import os
 
 source_path = "/share/wenzhuoliu/torch_ds/imagenet"
-target_path = "/share/wenzhuoliu/torch_ds/imagenet-subset"
+target_path = "/share/wenzhuoliu/torch_ds/imagenet-subset-new"
 # imagenet100_classes = list(imagenet_subset.keys())
 
 for class_i in labels:
