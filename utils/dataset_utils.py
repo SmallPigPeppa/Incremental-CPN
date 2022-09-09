@@ -50,6 +50,20 @@ def get_dataset(dataset, data_path):
                                              transform=imagenet_tansforms)
         test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
                                             transform=imagenet_tansforms)
+    elif dataset == "imagenet-subset-new":
+        mean = [0.485, 0.456, 0.406]
+        std = [0.229, 0.224, 0.225]
+        data_path = os.path.join(data_path, "imagenet-subset-new")
+        imagenet_tansforms = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=mean, std=std),
+        ])
+        train_dataset = datasets.ImageFolder(root=os.path.join(data_path, "train"),
+                                             transform=imagenet_tansforms)
+        test_dataset = datasets.ImageFolder(root=os.path.join(data_path, "val"),
+                                            transform=imagenet_tansforms)
 
     return train_dataset, test_dataset
 
