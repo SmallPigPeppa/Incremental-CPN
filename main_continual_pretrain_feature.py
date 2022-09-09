@@ -33,19 +33,23 @@ def main():
     x_test = np.load(os.path.join(args.data_path, args.dataset, "x_test.npy"))
     y_train = np.load(os.path.join(args.data_path, args.dataset, "y_train.npy"))
     y_test = np.load(os.path.join(args.data_path, args.dataset, "y_test.npy"))
-    train_dataset_pretrained = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
-    test_dataset_pretrained = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
+
     for task_idx in range(0, args.num_tasks + 1):
-        train_dataset_task = split_dataset2(
-            train_dataset_pretrained,
+        x_train_task, y_train_task = split_dataset2(
+            x_train,
+            y_train,
             tasks=tasks,
             task_idx=[task_idx],
         )
-        test_dataset_task = split_dataset2(
-            test_dataset_pretrained,
+        x_test_task, y_test_task = split_dataset2(
+            x_test,
+            y_test,
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
         )
+
+        train_dataset_task = TensorDataset(torch.tensor(x_train_task), torch.tensor(y_train_task, dtype=torch.long))
+        test_dataset_task = TensorDataset(torch.tensor(x_test_task), torch.tensor(y_test_task, dtype=torch.long))
         train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
         test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
         wandb_logger = WandbLogger(
@@ -76,6 +80,7 @@ def main():
         )
         trainer.fit(model, train_loader, test_loader)
         wandb.finish()
+
 
 if __name__ == '__main__':
     main()
