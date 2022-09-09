@@ -4,7 +4,7 @@ CUDA_VISIBLE_DEVICES=1 python main_continual_pretrain_feature.py \
       --num_tasks 5 \
       --pretrained_method byol \
       --pl_lambda $lambda \
-      --dataset imagenet-subset \
+      --dataset imagenet100 \
       --data_path /share/wenzhuoliu/code/debug/byol-deepmind/data_pretrained \
       --project Incremental-CPN-Imagenet100 \
       --perfix official-
