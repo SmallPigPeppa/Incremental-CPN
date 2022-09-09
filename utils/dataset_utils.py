@@ -62,6 +62,14 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     task_dataset = Subset(dataset, indexes)
     return task_dataset
 
+def split_dataset2(dataset: Dataset, task_idx: List[int], tasks: list = None):
+    print(dataset.__dict__)
+    current_task = torch.cat(tuple(tasks[i] for i in task_idx))
+    mask = [(c in current_task) for c in dataset.targets]
+    indexes = torch.tensor(mask).nonzero()
+    task_dataset = Subset(dataset, indexes)
+    return task_dataset
+
 
 def get_pretrained_dataset(encoder, train_dataset, test_dataset, tau=1.0, return_means=False):
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')

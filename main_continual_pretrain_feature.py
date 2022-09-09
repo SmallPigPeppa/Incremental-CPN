@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 import wandb
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import seed_everything
-from utils.dataset_utils import split_dataset
+from utils.dataset_utils import split_dataset2
 from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.args_utils import parse_args_cpn
 from models.icpn import IncrementalCPN
@@ -36,12 +36,12 @@ def main():
     train_dataset_pretrained = TensorDataset(torch.tensor(x_train), torch.tensor(y_train, dtype=torch.long))
     test_dataset_pretrained = TensorDataset(torch.tensor(x_test), torch.tensor(y_test, dtype=torch.long))
     for task_idx in range(0, args.num_tasks + 1):
-        train_dataset_task = split_dataset(
+        train_dataset_task = split_dataset2(
             train_dataset_pretrained,
             tasks=tasks,
             task_idx=[task_idx],
         )
-        test_dataset_task = split_dataset(
+        test_dataset_task = split_dataset2(
             test_dataset_pretrained,
             tasks=tasks,
             task_idx=list(range(task_idx + 1)),
