@@ -63,9 +63,9 @@ def split_dataset(dataset: Dataset, task_idx: List[int], tasks: list = None):
     return task_dataset
 
 def split_dataset2(dataset: Dataset, task_idx: List[int], tasks: list = None):
-    print(dataset.__dict__)
+    print(dataset["tensors"])
     current_task = torch.cat(tuple(tasks[i] for i in task_idx))
-    mask = [(c in current_task) for c in dataset[:,1]]
+    mask = [(c in current_task) for c in dataset["tensors"][1]]
     indexes = torch.tensor(mask).nonzero()
     task_dataset = Subset(dataset, indexes)
     return task_dataset
