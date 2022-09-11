@@ -1,7 +1,7 @@
 conda activate torch
 lambda=0.2
 CUDA_VISIBLE_DEVICES=1 python main_continual_pretrain_feature.py \
-      --num_tasks 5 \
+      --num_tasks 10 \
       --pretrained_method byol \
       --pl_lambda $lambda \
       --dataset imagenet100 \
