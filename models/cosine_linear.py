@@ -46,10 +46,8 @@ class MLP(pl.LightningModule):
         x = x.reshape(-1, 1, self.dim_feature)
         prototypes_list = [i for i in self.prototypes]
         prototypes = torch.cat(prototypes_list)
-        x_norm = x / (x.norm(dim=2, keepdim=True) + 1e-8)
-        prototypes_norm = prototypes / (prototypes.norm(dim=1, keepdim=True).unsqueeze(2) + 1e-8)
-        cosine = torch.bmm(x_norm, prototypes_norm.transpose(1, 2))
-        return 1 - cosine.squeeze()
+        cosine = F.linear(F.normalize(x, p=2, dim=1), F.normalize(prototypes, p=2, dim=1))
+        return cosine
 
     def share_step(self, batch, batch_idx):
         x, targets = batch
