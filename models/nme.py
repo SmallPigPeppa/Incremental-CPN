@@ -52,11 +52,11 @@ class IncrementalCPN(pl.LightningModule):
         pl_loss = torch.diagonal(pl_loss)
         pl_loss = torch.mean(pl_loss)
         # all loss
-        loss = ce_loss + pl_loss * self.pl_lambda
+        loss = 0.*ce_loss + pl_loss * self.pl_lambda
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
-        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "acc": acc, "loss": 0.}
+        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "acc": acc, "loss": loss}
 
     def training_step(self, batch, batch_idx):
         out = self.share_step(batch, batch_idx)
