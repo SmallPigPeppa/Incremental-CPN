@@ -18,14 +18,15 @@ class MLP(pl.LightningModule):
         self.model = nn.Linear(dim_feature, num_classes)
 
     def task_initial(self, current_tasks, means=None):
-        if means is not None:
-            for i in current_tasks:
-                self.prototypes[i].data = torch.nn.Parameter((means[str(i)]).reshape(1, -1))
-        no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
-        for i in no_grad_idx:
-            self.prototypes[i].requires_grad = False
-        for i in current_tasks:
-            self.prototypes[i].requires_grad = True
+        # if means is not None:
+        #     for i in current_tasks:
+        #         self.prototypes[i].data = torch.nn.Parameter((means[str(i)]).reshape(1, -1))1
+        # no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
+        # for i in no_grad_idx:
+        #     self.prototypes[i].requires_grad = False
+        # for i in current_tasks:
+        #     self.prototypes[i].requires_grad = True
+        pass
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.lr)
