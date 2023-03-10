@@ -7,7 +7,7 @@ python main_continual.py \
       --pretrained_method byol\
       --pl_lambda 0 \
       --project IPC-ablation-exp \
-      --epochs 300 \
+      --epochs 100 \
       --cpn_initial means \
       --perfix ipc
 
@@ -17,6 +17,6 @@ python main_continual.py \
       --pretrained_method byol\
       --pl_lambda 0 \
       --project IPC-ablation-exp \
-      --epochs 300 \
+      --epochs 100 \
       --cpn_initial means \
       --perfix ipc
