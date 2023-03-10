@@ -16,7 +16,6 @@ class CosineLinear(nn.Module):
             self.bias = nn.Parameter(torch.Tensor(out_features))
         else:
             self.register_parameter('bias', None)
-        self.reset_parameters()
 
 
     def forward(self, input):
