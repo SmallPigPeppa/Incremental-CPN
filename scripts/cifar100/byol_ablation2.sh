@@ -9,7 +9,7 @@ python main_continual_pc.py \
       --project IPC-ablation-exp \
       --epochs 30 \
       --cpn_initial means \
-      --perfix pc
+      --perfix pc_
 
 python main_continual_pc.py \
       --num_tasks 10 \
@@ -19,7 +19,7 @@ python main_continual_pc.py \
       --project IPC-ablation-exp \
       --epochs 30 \
       --cpn_initial means \
-      --perfix pc
+      --perfix pc_
 
 python main_continual_pc.py \
       --num_tasks 5 \
@@ -29,7 +29,7 @@ python main_continual_pc.py \
       --project IPC-ablation-exp \
       --epochs 30 \
       --cpn_initial means \
-      --perfix pc_w_pl
+      --perfix pc_w_pl_
 
 python main_continual_pc.py \
       --num_tasks 10 \
@@ -39,4 +39,4 @@ python main_continual_pc.py \
       --project IPC-ablation-exp \
       --epochs 30 \
       --cpn_initial means \
-      --perfix pc_w_pl
+      --perfix pc_w_pl_
