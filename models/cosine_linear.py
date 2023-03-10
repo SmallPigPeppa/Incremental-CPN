@@ -3,48 +3,31 @@ import pytorch_lightning as pl
 from torch import nn
 from torch.nn import functional as F
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-import math
-
-class CosineLinear(nn.Module):
-    def __init__(self, in_features, out_features):
-        super(CosineLinear, self).__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
 
 
-
-
-    def forward(self, input):
-        input_norm = input / (input.norm(dim=1, keepdim=True) + 1e-8)
-        weight_norm = self.weight / (self.weight.norm(dim=1, keepdim=True) + 1e-8)
-        cosine = torch.mm(input_norm, weight_norm.t())
-
-        return cosine
-
-
-class MLP(pl.LightningModule):
-    def __init__(self, dim_feature, num_classes, pl_lambda, lr, epochs, warmup_epochs, **kwargs):
-        super(MLP, self).__init__()
+class IncrementalCPN(pl.LightningModule):
+    def __init__(self, dim_feature, num_classes, lr, epochs, warmup_epochs, lambda1, lambda2=0., **kwargs):
+        super(IncrementalCPN, self).__init__()
         self.dim_feature = dim_feature
         self.num_calsses = num_classes
-        self.pl_lambda = pl_lambda
+        self.lambda1 = lambda1
+        self.lambda2 = lambda2
         self.lr = lr
         self.epochs = epochs
         self.warmup_epochs = warmup_epochs
         self.extra_args = kwargs
-        self.model = CosineLinear(dim_feature, num_classes)
+        self.prototypes = nn.ParameterList(
+            [nn.Parameter(torch.randn(1, self.dim_feature)) for i in range(num_classes)])
 
     def task_initial(self, current_tasks, means=None):
-        # if means is not None:
-        #     for i in current_tasks:
-        #         self.prototypes[i].data = torch.nn.Parameter((means[str(i)]).reshape(1, -1))1
-        # no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
-        # for i in no_grad_idx:
-        #     self.prototypes[i].requires_grad = False
-        # for i in current_tasks:
-        #     self.prototypes[i].requires_grad = True
-        pass
+        if means is not None:
+            for i in current_tasks:
+                self.prototypes[i].data = torch.nn.Parameter((means[str(i)]).reshape(1, -1))
+        no_grad_idx = [i for i in range(self.num_calsses) if i not in current_tasks]
+        for i in no_grad_idx:
+            self.prototypes[i].requires_grad = False
+        for i in current_tasks:
+            self.prototypes[i].requires_grad = True
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.lr)
@@ -52,19 +35,43 @@ class MLP(pl.LightningModule):
                                                   max_epochs=self.epochs)
         return [optimizer], [scheduler]
 
+    # def forward(self, x):
+    #     x = x.reshape(-1, 1, self.dim_feature)
+    #     prototypes_list = [i for i in self.prototypes]
+    #     d = torch.pow(x - torch.cat(prototypes_list), 2)
+    #     d = torch.sum(d, dim=2)
+    #     return d
+
     def forward(self, x):
-        out = self.model(x)
-        return out
+        x = x.reshape(-1, 1, self.dim_feature)
+        prototypes_list = [i for i in self.prototypes]
+        x_norm = x / (x.norm(dim=2, keepdim=True) + 1e-8)
+        prototypes_norm = torch.cat(prototypes_list) / (prototypes_list.norm(dim=2, keepdim=True) + 1e-8)
+        cosine = torch.bmm(x_norm, prototypes_norm.transpose(1, 2))
+        return 1 - cosine.squeeze()
 
     def share_step(self, batch, batch_idx):
         x, targets = batch
-        logits = self.forward(x)
+        d = self.forward(x)
+        logits = -1. * d
         # ce loss
         ce_loss = F.cross_entropy(logits, targets)
+        # pl loss
+        pl_loss = torch.index_select(d, dim=1, index=targets)
+        pl_loss = torch.diagonal(pl_loss)
+        pl_loss = torch.mean(pl_loss)
+        # pl cosine loss
+        prototypes_list = [i for i in self.prototypes]
+        w = torch.cat(prototypes_list)
+        c = torch.index_select(w, dim=0, index=targets)
+        cos_matrix = F.normalize(x, p=2, dim=1) * F.normalize(c, p=2, dim=1)
+        pl_cos_loss = -1. * torch.sum(cos_matrix)
+        # all loss
+        loss = ce_loss + pl_loss * self.lambda1 + pl_cos_loss * self.lambda2
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
-        return {"acc": acc, "loss": ce_loss}
+        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "pl_cosine_loss": pl_cos_loss, "acc": acc, "loss": loss}
 
     def training_step(self, batch, batch_idx):
         out = self.share_step(batch, batch_idx)
