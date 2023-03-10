@@ -6,30 +6,20 @@ from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 import math
 
 class CosineLinear(nn.Module):
-    def __init__(self, in_features, out_features, bias=False):
+    def __init__(self, in_features, out_features):
         super(CosineLinear, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
-        if bias:
-            self.bias = nn.Parameter(torch.Tensor(out_features))
-        else:
-            self.register_parameter('bias', None)
-        self.reset_parameters()
 
-    def reset_parameters(self):
-        nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
-        if self.bias is not None:
-            fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.weight)
-            bound = 1 / math.sqrt(fan_in)
-            nn.init.uniform_(self.bias, -bound, bound)
+
+
 
     def forward(self, input):
         input_norm = input / (input.norm(dim=1, keepdim=True) + 1e-8)
         weight_norm = self.weight / (self.weight.norm(dim=1, keepdim=True) + 1e-8)
         cosine = torch.mm(input_norm, weight_norm.t())
-        if self.bias is not None:
-            cosine = cosine + self.bias
+
         return cosine
 
 
