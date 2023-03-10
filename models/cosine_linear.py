@@ -45,8 +45,9 @@ class MLP(pl.LightningModule):
     def forward(self, x):
         x = x.reshape(-1, 1, self.dim_feature)
         prototypes_list = [i for i in self.prototypes]
+        prototypes = torch.cat(prototypes_list)
         x_norm = x / (x.norm(dim=2, keepdim=True) + 1e-8)
-        prototypes_norm = torch.cat(prototypes_list) / (prototypes_list.norm(dim=2, keepdim=True) + 1e-8)
+        prototypes_norm = prototypes / (prototypes.norm(dim=2, keepdim=True) + 1e-8)
         cosine = torch.bmm(x_norm, prototypes_norm.transpose(1, 2))
         return 1 - cosine.squeeze()
 
