@@ -1,4 +1,4 @@
-conda activate torch
+#conda activate torch
 
 
 python main_continual.py \
@@ -8,7 +8,8 @@ python main_continual.py \
       --pl_lambda 0 \
       --project IPC-ablation-exp \
       --epochs 100 \
-      --cpn_initial mean
+      --cpn_initial mean \
+      --perfix ipc
 
 python main_continual.py \
       --num_tasks 10 \
@@ -17,4 +18,5 @@ python main_continual.py \
       --pl_lambda 0 \
       --project IPC-ablation-exp \
       --epochs 100 \
-      --cpn_initial mean
+      --cpn_initial mean \
+      --perfix ipc
