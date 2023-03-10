@@ -6,12 +6,11 @@ from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 
 
 class IncrementalCPN(pl.LightningModule):
-    def __init__(self, dim_feature, num_classes, lr, epochs, warmup_epochs, lambda1, lambda2=0., **kwargs):
+    def __init__(self, dim_feature, num_classes, pl_lambda, lr, epochs, warmup_epochs, **kwargs):
         super(IncrementalCPN, self).__init__()
         self.dim_feature = dim_feature
         self.num_calsses = num_classes
-        self.lambda1 = lambda1
-        self.lambda2 = lambda2
+        self.pl_lambda = pl_lambda
         self.lr = lr
         self.epochs = epochs
         self.warmup_epochs = warmup_epochs
@@ -27,7 +26,7 @@ class IncrementalCPN(pl.LightningModule):
         for i in no_grad_idx:
             self.prototypes[i].requires_grad = False
         for i in current_tasks:
-            self.prototypes[i].requires_grad = False
+            self.prototypes[i].requires_grad = True
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.lr)
@@ -52,18 +51,12 @@ class IncrementalCPN(pl.LightningModule):
         pl_loss = torch.index_select(d, dim=1, index=targets)
         pl_loss = torch.diagonal(pl_loss)
         pl_loss = torch.mean(pl_loss)
-        # pl cosine loss
-        prototypes_list = [i for i in self.prototypes]
-        w = torch.cat(prototypes_list)
-        c = torch.index_select(w, dim=0, index=targets)
-        cos_matrix = F.normalize(x, p=2, dim=1) * F.normalize(c, p=2, dim=1)
-        pl_cos_loss = -1. * torch.sum(cos_matrix)
         # all loss
-        loss = ce_loss + pl_loss * self.lambda1 + pl_cos_loss * self.lambda2
+        loss = ce_loss + pl_loss * self.pl_lambda
         # acc
         preds = torch.argmax(logits, dim=1)
         acc = torch.sum(preds == targets) / targets.shape[0]
-        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "pl_cosine_loss": pl_cos_loss, "acc": acc, "loss": loss}
+        return {"ce_loss": ce_loss, "pl_loss": pl_loss, "acc": acc, "loss": 0.}
 
     def training_step(self, batch, batch_idx):
         out = self.share_step(batch, batch_idx)

@@ -5,9 +5,9 @@ from torch.nn import functional as F
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 
 
-class IncrementalCPN(pl.LightningModule):
+class MLP(pl.LightningModule):
     def __init__(self, dim_feature, num_classes, lr, epochs, warmup_epochs, lambda1, lambda2=0., **kwargs):
-        super(IncrementalCPN, self).__init__()
+        super(MLP, self).__init__()
         self.dim_feature = dim_feature
         self.num_calsses = num_classes
         self.lambda1 = lambda1
