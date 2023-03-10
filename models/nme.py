@@ -27,7 +27,7 @@ class IncrementalCPN(pl.LightningModule):
         for i in no_grad_idx:
             self.prototypes[i].requires_grad = False
         for i in current_tasks:
-            self.prototypes[i].requires_grad = True
+            self.prototypes[i].requires_grad = False
 
     def configure_optimizers(self):
         optimizer = torch.optim.SGD(self.parameters(), lr=self.lr)
