@@ -7,7 +7,7 @@ python main_continual_pc.py \
       --pretrained_method byol\
       --pl_lambda 0 \
       --project IPC-ablation-exp \
-      --epochs 100 \
+      --epochs 300 \
       --cpn_initial means \
       --perfix pc
 
@@ -17,7 +17,7 @@ python main_continual_pc.py \
       --pretrained_method byol\
       --pl_lambda 0 \
       --project IPC-ablation-exp \
-      --epochs 100 \
+      --epochs 300 \
       --cpn_initial means \
       --perfix pc
 
@@ -27,7 +27,7 @@ python main_continual_pc.py \
       --pretrained_method byol\
       --pl_lambda 0.2 \
       --project IPC-ablation-exp \
-      --epochs 100 \
+      --epochs 300 \
       --cpn_initial means \
       --perfix pc_w_pl
 
@@ -37,6 +37,6 @@ python main_continual_pc.py \
       --pretrained_method byol\
       --pl_lambda 0.2 \
       --project IPC-ablation-exp \
-      --epochs 100 \
+      --epochs 300 \
       --cpn_initial means \
       --perfix pc_w_pl
