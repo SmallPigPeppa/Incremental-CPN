@@ -6,7 +6,7 @@ from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 import math
 
 class CosineLinear(nn.Module):
-    def __init__(self, in_features, out_features, bias=True):
+    def __init__(self, in_features, out_features, bias=False):
         super(CosineLinear, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
