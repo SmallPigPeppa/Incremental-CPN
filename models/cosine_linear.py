@@ -19,7 +19,7 @@ class CosineLinear(nn.Module):
 
 
     def forward(self, input):
-        cosine = nn.functional.cosine_similarity(input, self.weight, dim=1)
+        cosine = F.linear(F.normalize(input, p=2, dim=1), F.normalize(self.weight, p=2, dim=1))
         if self.bias is not None:
             cosine = cosine + self.bias
         return cosine
