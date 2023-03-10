@@ -46,7 +46,7 @@ class MLP(pl.LightningModule):
         x = x.reshape(-1, 1, self.dim_feature)
         prototypes_list = [i for i in self.prototypes]
         prototypes = torch.cat(prototypes_list)
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         cosine = F.linear(F.normalize(x, p=2, dim=1), F.normalize(prototypes, p=2, dim=1)).squeeze()
         return cosine
 
