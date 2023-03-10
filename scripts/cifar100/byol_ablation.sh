@@ -8,7 +8,7 @@ python main_continual.py \
       --pl_lambda 0 \
       --project IPC-ablation-exp \
       --epochs 300 \
-      --cpn_initial mean \
+      --cpn_initial means \
       --perfix ipc
 
 python main_continual.py \
@@ -18,5 +18,5 @@ python main_continual.py \
       --pl_lambda 0 \
       --project IPC-ablation-exp \
       --epochs 300 \
-      --cpn_initial mean \
+      --cpn_initial means \
       --perfix ipc
