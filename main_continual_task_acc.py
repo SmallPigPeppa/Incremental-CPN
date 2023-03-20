@@ -80,6 +80,11 @@ def main():
         trainer.fit(model, train_loader, test_loader)
 
         if task_idx!=0:
+            train_dataset_task = split_dataset(
+                train_dataset,
+                tasks=tasks,
+                task_idx=[task_idx],
+            )
             old_test_dataset_task = split_dataset(
                 test_dataset,
                 tasks=tasks,
