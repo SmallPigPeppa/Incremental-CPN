@@ -8,7 +8,7 @@ from utils.dataset_utils import get_dataset, get_pretrained_dataset, split_datas
 from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.encoder_utils import get_pretrained_encoder
 from utils.args_utils import parse_args_cpn
-from models.icpn import IncrementalCPN
+from models.icpn_new_old_acc import IncrementalCPN
 
 
 def main():
@@ -110,8 +110,8 @@ def main():
             old_test_loader = DataLoader(old_test_dataset_task, batch_size=64, shuffle=True)
 
 
-            trainer.test(model, old_test_loader)
-            trainer.test(model, new_test_loader)
+            trainer.test(model, test_dataloaders=[old_test_loader, new_test_loader])
+            # trainer.test(model, new_test_loader)
 
         wandb.finish()
 
