@@ -82,17 +82,20 @@ class IncrementalCPN(pl.LightningModule):
     def test_epoch_end(self, outputs):
         old_test_logs = {}
         new_test_logs = {}
-        import pdb;pdb.set_trace()
-        for output in outputs:
-            for k, v in output.items():
-                if k.startswith('old_test_'):
-                    if k not in old_test_logs:
-                        old_test_logs[k] = []
-                    old_test_logs[k].append(v)
-                elif k.startswith('new_test_'):
-                    if k not in new_test_logs:
-                        new_test_logs[k] = []
-                    new_test_logs[k].append(v)
+        # import pdb;pdb.set_trace()
+
+        for i in outputs[0]:
+            for k, v in i.items():
+                if k not in old_test_logs:
+                    old_test_logs[k] = []
+                old_test_logs[k].append(v)
+        for i in outputs[1]:
+            for k, v in i.items():
+                if k not in old_test_logs:
+                    new_test_logs[k] = []
+                new_test_logs[k].append(v)
+
+
 
         old_test_avg_logs = {k: sum(v) / len(v) for k, v in old_test_logs.items()}
         new_test_avg_logs = {k: sum(v) / len(v) for k, v in new_test_logs.items()}
