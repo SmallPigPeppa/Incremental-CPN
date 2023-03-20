@@ -1,4 +1,4 @@
-conda activate torch
+#conda activate torch
 
 lambda=0.2
 CUDA_VISIBLE_DEVICES=0 python main_continual.py \
