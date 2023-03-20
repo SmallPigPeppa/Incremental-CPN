@@ -82,7 +82,7 @@ class IncrementalCPN(pl.LightningModule):
     def test_epoch_end(self, outputs):
         old_test_logs = {}
         new_test_logs = {}
-
+        import pdb;pdb.set_trace()
         for output in outputs:
             for k, v in output.items():
                 if k.startswith('old_test_'):
