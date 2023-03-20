@@ -76,5 +76,29 @@ class IncrementalCPN(pl.LightningModule):
             log_dict = {"old_test_" + k: v for k, v in out.items()}
         elif dataloader_idx == 1:
             log_dict = {"new_test_" + k: v for k, v in out.items()}
-        self.log_dict(log_dict, on_epoch=True, sync_dist=True)
-        return out
+
+        return log_dict
+
+    def test_epoch_end(self, outputs):
+        old_test_logs = {}
+        new_test_logs = {}
+
+        for output in outputs:
+            for k, v in output.items():
+                if k.startswith('old_test_'):
+                    if k not in old_test_logs:
+                        old_test_logs[k] = []
+                    old_test_logs[k].append(v)
+                elif k.startswith('new_test_'):
+                    if k not in new_test_logs:
+                        new_test_logs[k] = []
+                    new_test_logs[k].append(v)
+
+        old_test_avg_logs = {k: sum(v) / len(v) for k, v in old_test_logs.items()}
+        new_test_avg_logs = {k: sum(v) / len(v) for k, v in new_test_logs.items()}
+
+        for k, v in old_test_avg_logs.items():
+            self.log(k + '_avg', v, prog_bar=True)
+
+        for k, v in new_test_avg_logs.items():
+            self.log(k + '_avg', v, prog_bar=True)
