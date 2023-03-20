@@ -110,8 +110,8 @@ def main():
             old_test_loader = DataLoader(old_test_dataset_task, batch_size=64, shuffle=True)
 
 
-            trainer.validate(model, old_test_loader)
-            trainer.validate(model, new_test_loader)
+            trainer.test(model, old_test_loader)
+            trainer.test(model, new_test_loader)
 
         wandb.finish()
 
