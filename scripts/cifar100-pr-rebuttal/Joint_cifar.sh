@@ -10,7 +10,7 @@
 #      --project PR-rebuttal-new
 
 python pr_rebuttal_joint_linear_new.py \
-      --num_tasks 10 \
+      --num_tasks 5 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet32-t3pmk238-ep=999.ckpt \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
