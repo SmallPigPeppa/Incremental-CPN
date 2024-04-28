@@ -15,13 +15,13 @@ def main():
     seed_everything(5)
     args = parse_args_cpn()
     num_gpus = [0]
-    model = MLP(**args.__dict__)
     if "cifar" in args.dataset:
         encoder = get_pretrained_encoder(args.pretrained_model, cifar=True)
-        model.encoder = encoder
     else:
         encoder = get_pretrained_encoder(args.pretrained_model, cifar=False)
-        model.encoder = encoder
+
+    model = MLP(**args.__dict__)
+    model.encoder = encoder
 
     classes_order = torch.tensor(
         [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28,
