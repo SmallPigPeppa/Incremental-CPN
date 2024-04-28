@@ -1,24 +1,4 @@
-#python pr_rebuttal_linear_joint.py \
-#      --num_tasks 5 \
-#      --pretrained_model /ppio_net0/pretrained/byol-imagenet32-t3pmk238-ep=999.ckpt \
-#      --pretrained_method byol \
-#      --data_path /ppio_net0/torch_ds \
-#      --dataset cifar100 \
-#      --epochs 50 \
-#      --project PR-rebuttal
-#
-#python pr_rebuttal_linear_joint.py \
-#      --num_tasks 10 \
-#      --pretrained_model /ppio_net0/pretrained/byol-imagenet32-t3pmk238-ep=999.ckpt \
-#      --pretrained_method byol \
-#      --data_path /ppio_net0/torch_ds \
-#      --dataset cifar100 \
-#      --epochs 50 \
-#      --project PR-rebuttal
-
-
-
-python pr_rebuttal_linear_joint.py \
+python pr_rebuttal_joint.py \
       --num_tasks 5 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet-3tx0at58-ep=999.ckpt \
       --pretrained_method byol \
@@ -30,7 +10,7 @@ python pr_rebuttal_linear_joint.py \
       --project PR-rebuttal
 
 
-python pr_rebuttal_linear_joint.py \
+python pr_rebuttal_joint.py \
       --num_tasks 10 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet-3tx0at58-ep=999.ckpt \
       --pretrained_method byol \
