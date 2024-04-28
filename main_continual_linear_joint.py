@@ -72,7 +72,7 @@ def main():
             sync_batchnorm=True,
             accelerator='ddp',
             logger=wandb_logger,
-            checkpoint_callback=False,
+            enable_checkpointing=False,
             precision=16,
             callbacks=[lr_monitor]
 
