@@ -80,6 +80,7 @@ def main():
 
         )
         trainer.fit(model, train_loader, test_loader)
+        trainer.test(model, test_loader)
         wandb.finish()
 
 

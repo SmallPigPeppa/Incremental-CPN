@@ -60,3 +60,4 @@ class MLP(pl.LightningModule):
         log_dict = {"test_" + k: v for k, v in out.items()}
         self.log_dict(log_dict, on_epoch=True, sync_dist=True)
         return out
+

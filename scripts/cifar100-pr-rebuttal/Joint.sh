@@ -4,7 +4,7 @@ python main_continual_linear_joint.py \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
       --dataset cifar100 \
-      --epochs 80 \
+      --epochs 1 \
       --project PR-rebuttal
 
 #python main_continual_linear_joint.py \
