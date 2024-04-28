@@ -23,6 +23,7 @@ python main_continual_linear_joint.py \
       --dataset imagenet100 \
       --project PR-rebuttal
 
+
 python main_continual_linear_joint.py \
       --num_tasks 10 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet-3tx0at58-ep=999.ckpt \
