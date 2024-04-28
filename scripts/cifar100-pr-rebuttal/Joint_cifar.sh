@@ -1,4 +1,4 @@
-python pr_rebuttal_joint_ipc.py \
+python pr_rebuttal_joint_linear.py \
       --num_tasks 5 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet32-t3pmk238-ep=999.ckpt \
       --pretrained_method byol \
@@ -9,7 +9,7 @@ python pr_rebuttal_joint_ipc.py \
       --batch_size 256 \
       --project PR-rebuttal-new
 
-python pr_rebuttal_joint_ipc.py \
+python pr_rebuttal_joint_linear.py \
       --num_tasks 10 \
       --pretrained_model /ppio_net0/pretrained/byol-imagenet32-t3pmk238-ep=999.ckpt \
       --pretrained_method byol \
