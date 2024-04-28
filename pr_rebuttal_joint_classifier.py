@@ -16,7 +16,6 @@ def main():
     args = parse_args_cpn()
     num_gpus = [0]
 
-
     classes_order = torch.tensor(
         [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28,
          53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97,
@@ -31,8 +30,10 @@ def main():
         filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_50_{args.num_tasks}_1993_resnet50.pt"
         if "cifar" in args.dataset:
             encoder = get_pretrained_encoder(filename, cifar=True)
+            encoder.fc = torch.nn.Identity()
         else:
             encoder = get_pretrained_encoder(filename, cifar=False)
+            encoder.fc = torch.nn.Identity()
 
         model = MLP(**args.__dict__)
         model.encoder = encoder
