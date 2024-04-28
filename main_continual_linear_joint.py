@@ -70,7 +70,7 @@ def main():
             max_epochs=args.epochs,
             accumulate_grad_batches=1,
             sync_batchnorm=True,
-            accelerator='ddp',
+            # accelerator='gpu',
             logger=wandb_logger,
             enable_checkpointing=False,
             precision=16,
