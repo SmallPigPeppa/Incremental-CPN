@@ -1,6 +1,10 @@
-conda activate torch
-python main_continual.py \
+python pr_rebuttal_TIL.py \
       --num_tasks 5 \
-      --pretrained_model /share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt \
-      --pretrained_method byol
-
+      --pretrained_model /ppio_net0/code/PyCIL-latest/logs/lwf \
+      --pretrained_method byol \
+      --data_path /ppio_net0/torch_ds \
+      --dataset cifar100 \
+      --epochs 1 \
+      --lr 0.1 \
+      --batch_size 256 \
+      --project jjj
