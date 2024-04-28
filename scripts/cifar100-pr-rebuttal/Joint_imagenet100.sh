@@ -24,7 +24,7 @@ python main_continual_linear_joint.py \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
       --dataset imagenet100 \
-      --epochs 50 \
+      --epochs 30 \
       --lr 0.1 \
       --batch_size 256 \
       --project PR-rebuttal
@@ -36,7 +36,7 @@ python main_continual_linear_joint.py \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
       --dataset imagenet100 \
-      --epochs 50 \
+      --epochs 30 \
       --lr 0.1 \
       --batch_size 256 \
       --project PR-rebuttal
