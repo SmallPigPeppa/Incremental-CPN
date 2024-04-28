@@ -25,6 +25,8 @@ python main_continual_linear_joint.py \
       --data_path /ppio_net0/torch_ds \
       --dataset imagenet100 \
       --epochs 50 \
+      --lr 0.1 \
+      --batch_size 256 \
       --project PR-rebuttal
 
 
@@ -35,6 +37,8 @@ python main_continual_linear_joint.py \
       --data_path /ppio_net0/torch_ds \
       --dataset imagenet100 \
       --epochs 50 \
+      --lr 0.1 \
+      --batch_size 256 \
       --project PR-rebuttal
 
 

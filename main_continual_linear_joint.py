@@ -4,7 +4,7 @@ import wandb
 from torch.utils.data import DataLoader
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import seed_everything
-from utils.dataset_utils import get_dataset, get_pretrained_dataset, split_dataset
+from utils.dataset_utils import get_dataset_joint, get_pretrained_dataset, split_dataset
 from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.encoder_utils import get_pretrained_encoder
 from utils.args_utils import parse_args_cpn
@@ -34,7 +34,7 @@ def main():
     tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
     tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(args.num_tasks)
     tasks = tasks_initial + tasks_incremental
-    train_dataset, test_dataset = get_dataset(dataset=args.dataset, data_path=args.data_path)
+    train_dataset, test_dataset = get_dataset_joint(dataset=args.dataset, data_path=args.data_path)
 
     for task_idx in range(0, args.num_tasks + 1):
         wandb_logger = WandbLogger(
@@ -61,8 +61,10 @@ def main():
         #     train_dataset=train_dataset_task,
         #     test_dataset=test_dataset_task,
         #     return_means=True)
-        train_loader = DataLoader(train_dataset_task, batch_size=64, shuffle=True)
-        test_loader = DataLoader(test_dataset_task, batch_size=64, shuffle=True)
+        train_loader = DataLoader(train_dataset_task, batch_size=args.batch_size,
+                                  shuffle=True, num_workers=8, pin_memory=True)
+        test_loader = DataLoader(test_dataset_task, batch_size=args.batch_size,
+                                 shuffle=True, num_workers=8, pin_memory=True)
         # if args.cpn_initial == "means":
         #     model.task_initial(current_tasks=tasks[task_idx], means=cpn_means)
         # else:
