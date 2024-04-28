@@ -68,7 +68,7 @@ def main():
         task_accuracy = sum(sub_task_accuracies) / len(sub_task_accuracies)
         total_accuracies.append(task_accuracy)
         print(f"Task {task_idx} Accuracy: {task_accuracy:.2f}")
-        print("Historical Accuracies:", [f"{acc:.2f}" for acc in total_accuracies[:-1]])
+        print("Historical Accuracies:", [f"{acc:.2f}" for acc in total_accuracies])
         print("Current Task Accuracy:", f"{task_accuracy:.2f}")
 
     wandb.finish()
