@@ -4,7 +4,7 @@ python pr_rebuttal_TIL.py \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
       --dataset cifar100 \
-      --epochs 1 \
+      --epochs 30 \
       --lr 0.1 \
       --batch_size 256 \
       --project jjj
