@@ -72,14 +72,14 @@ def main():
             max_epochs=args.epochs,
             accumulate_grad_batches=1,
             sync_batchnorm=True,
-            accelerator='ddp',
             logger=wandb_logger,
-            checkpoint_callback=False,
+            enable_checkpointing=False,
             precision=16,
             callbacks=[lr_monitor]
 
         )
         trainer.fit(model, train_loader, test_loader)
+        trainer.test(model, test_loader)
         wandb.finish()
 
 
