@@ -27,7 +27,7 @@ def main():
     train_dataset, test_dataset = get_dataset_joint(dataset=args.dataset, data_path=args.data_path)
 
     for task_idx in range(0, args.num_tasks + 1):
-        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_50_{args.num_tasks}_1993_resnet50.pt"
+        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_0_{int(100/args.num_tasks)}_1993_resnet50.pt"
         if "cifar" in args.dataset:
             encoder = get_pretrained_encoder(filename, cifar=True)
             encoder.fc = torch.nn.Identity()

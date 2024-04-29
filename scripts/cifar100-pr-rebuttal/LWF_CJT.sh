@@ -1,4 +1,4 @@
-python pr_rebuttal_joint_classifier.py \
+python pr_rebuttal_CJT.py \
       --num_tasks 5 \
       --pretrained_model /ppio_net0/code/PyCIL-latest/logs/lwf \
       --pretrained_method byol \
