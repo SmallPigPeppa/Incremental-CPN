@@ -20,16 +20,14 @@ def main():
          53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97,
          2, 64, 66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7,
          63, 75, 5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33])
-    tasks_initial = classes_order[:int(args.num_classes / 2)].chunk(1)
-    tasks_incremental = classes_order[int(args.num_classes / 2):args.num_classes].chunk(args.num_tasks)
-    tasks = tasks_initial + tasks_incremental
+    tasks = classes_order.chunk(args.num_tasks)
     train_dataset, test_dataset = get_dataset_joint(dataset=args.dataset, data_path=args.data_path)
 
     total_accuracies = []
 
-    for task_idx in range(args.num_tasks + 1):
+    for task_idx in range(args.num_tasks):
         sub_task_accuracies = []
-        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_50_{args.num_tasks}_1993_resnet50.pt"
+        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_0_{100//args.num_tasks}_1993_resnet50.pt"
         for sub_task_idx in range(task_idx + 1):
             encoder = get_pretrained_encoder(filename, cifar="cifar" in args.dataset)
             encoder.fc = torch.nn.Identity()
