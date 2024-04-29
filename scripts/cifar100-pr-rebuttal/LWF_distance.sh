@@ -1,5 +1,5 @@
 python pr_rebuttal_distance.py \
-      --num_tasks 5 \
+      --num_tasks 10 \
       --pretrained_model /ppio_net0/code/PyCIL-latest/logs/lwf \
       --pretrained_method byol \
       --data_path /ppio_net0/torch_ds \
