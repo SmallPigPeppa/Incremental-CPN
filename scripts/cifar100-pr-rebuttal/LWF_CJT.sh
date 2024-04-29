@@ -7,6 +7,6 @@ python pr_rebuttal_CJT.py \
       --epochs 30 \
       --lr 0.1 \
       --batch_size 256 \
-      --project PR-rebuttal-new
+      --project PR-rebuttal-new-new
 
 
