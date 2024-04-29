@@ -27,7 +27,7 @@ def main():
 
     for task_idx in range(args.num_tasks):
         sub_task_accuracies = []
-        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_0_{100//args.num_tasks}_1993_resnet50.pt"
+        filename = f"{args.pretrained_model}/task_{task_idx}_pretrain_0samples_cifar100_0_{100 // args.num_tasks}_1993_resnet50.pt"
         for sub_task_idx in range(task_idx + 1):
             encoder = get_pretrained_encoder(filename, cifar="cifar" in args.dataset)
             encoder.fc = torch.nn.Identity()
@@ -63,7 +63,7 @@ def main():
             results = trainer.test(model, test_loader)
             sub_task_accuracies.append(results[0]["test_acc"])
 
-        task_accuracy = sum(sub_task_accuracies) / len(sub_task_accuracies)
+        task_accuracy = sum(sub_task_accuracies) / len(sub_task_accuracies) * 100
         total_accuracies.append(task_accuracy)
         print(f"Task {task_idx} Accuracy: {task_accuracy:.2f}")
         print("Historical Accuracies:", [f"{acc:.2f}" for acc in total_accuracies])
