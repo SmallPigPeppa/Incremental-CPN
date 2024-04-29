@@ -33,7 +33,7 @@ def main():
     tasks = classes_order.chunk(args.num_tasks)
     train_dataset, test_dataset = get_dataset(dataset=args.dataset, data_path=args.data_path)
 
-    for task_idx in range(0, args.num_tasks + 1):
+    for task_idx in range(0, args.num_tasks):
         wandb_logger = WandbLogger(
             name=f"{args.dataset}-{args.pretrained_method}-{args.num_tasks}tasks-steps{task_idx}",
             project=args.project,
