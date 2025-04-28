@@ -2,7 +2,7 @@
 ![](./framework.png)
 
 ### [Pattern Recognition 2025] Class incremental learning with self-supervised pre-training and prototype learning
-Wenzhuo Liu, Xin-Jian Wu, Fei Zhu, Ming-Ming Yu, Chuang Wang,  Fei Yin, Cheng-Lin Liu<br>
+Wenzhuo Liu, Xin-Jian Wu, Fei Zhu, Ming-Ming Yu, Chuang Wang, Cheng-Lin Liu<br>
 [Paper](https://www.sciencedirect.com/science/article/pii/S0031320324006940)
 ### Usage 
 We run the code with torch version: 1.10.0, python version: 3.8.0
