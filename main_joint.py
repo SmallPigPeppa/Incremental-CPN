@@ -9,6 +9,8 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from utils.encoder_utils import get_pretrained_encoder
 from utils.args_utils import parse_args_cpn
 from models.linear import MLP
+from torchvision import datasets, transforms
+import os
 
 
 def main():
@@ -17,18 +19,7 @@ def main():
     num_gpus = [0]
     encoder = get_pretrained_encoder(args.pretrained_model, cifar=False)
     model = MLP(**args.__dict__)
-    mean = [0.5071, 0.4867, 0.4408]
-    std = [0.2675, 0.2565, 0.2761]
-    from torchvision import datasets, transforms
-    # cifar_transforms = transforms.Compose(
-    #     [transforms.Resize(224), transforms.ToTensor(), transforms.Normalize(mean, std)])
-    # train_dataset = datasets.CIFAR100(root=args.data_path, train=True,
-    #                                   transform=cifar_transforms,
-    #                                   download=True)
-    # test_dataset = datasets.CIFAR100(root=args.data_path, train=False,
-    #                                  transform=cifar_transforms,
-    #                                  download=True)
-    import os
+
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     data_path = os.path.join(args.data_path, "imagenet-subset")
